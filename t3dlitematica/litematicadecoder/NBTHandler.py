@@ -1,5 +1,5 @@
 import struct
-import litematicadecoder.Utilities as Utilities
+from . import Utilities
 
 
 def Resolve(binSource , indentationWhiteSpace = 2):
@@ -8,9 +8,10 @@ def Resolve(binSource , indentationWhiteSpace = 2):
     json = ""
     for jsonLine in jsonLines:
         json += jsonLine + "\n"
+        json += jsonLine
     return json
 
-
+#TODO: 重寫這裡
 def ReadCompoundTag(binSource , indentationWhiteSpace = 2 , pointer = 0 , defaultIndentation = 0 , readName = False):
     indentation = defaultIndentation
     name = ""

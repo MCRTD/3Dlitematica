@@ -1,5 +1,5 @@
-import litematicadecoder.NBTHandler as NBTHandler
-import litematicadecoder.Utilities as Utilities
+from . import NBTHandler
+from . import Utilities
 
 
 def Resolve(fPath):
