@@ -44,18 +44,16 @@ def decode_BlockStates(Resolve_data):
     for i in Resolve_data["Regions"]:
         Resolve_data["Regions"][i]["decode_BlockStates"] = []
         for y in Resolve_data["Regions"][i]["BlockStates"]:
-            # 將Y轉換long array
             y = int(y)
-            y = bin(y)[2:]
-            y = y.zfill(64)
-            print(y)
-            # 去除頭0000
-            y = y[4:]
-            # 每六格一組
-            y = [y[i:i+3] for i in range(0, len(y), 3)]
-            # 將每組轉換成int
+            y = bin(y & 0xffffffffffffffff)[2:].zfill(64)
+            y = y[::-1]
+            y = y[y.find("1"):]
+            bytelong = len(Resolve_data["Regions"][i]["BlockStatePalette"])
+            gg = 1
+            while bytelong > 2**gg:
+                gg += 1
+            y = [y[i:i+gg] for i in range(0, len(y), gg)]
             y = [int(i, 2) for i in y]
-            print(y)
             for z in y:
                 Resolve_data["Regions"][i]["decode_BlockStates"].append(Resolve_data["Regions"][i]["BlockStatePalette"][z])
 
