@@ -1,5 +1,6 @@
 from . import NBTHandler
 from . import Utilities
+from . import bitstack
 import math
 
 def Resolve(fPath):
@@ -48,25 +49,10 @@ def decode_BlockStates(Resolve_data):
 
     for i in Resolve_data["Regions"]:
         Resolve_data["Regions"][i]["decode_BlockStates"] = []
+        bitlist = bitstack.bitstack(len(Resolve_data["Regions"][i]["BlockStatePalette"]),Resolve_data["Regions"][i]["BlockStatePalette"])
         for y in Resolve_data["Regions"][i]["BlockStates"]:
-            y = int(y)
-            y = bin(y & 0xffffffffffffffff)[2:].zfill(64)
-
-            bytelong = len(Resolve_data["Regions"][i]["BlockStatePalette"])
-            gg = 1
-            while bytelong > 2**gg:
-                gg += 1
-            print(y)
-            y = [j for j in [y[i:i+8] for i in range(0, len(y), 8)][::-1]] # 8位一組
-            print(y)
-            y = "".join(y)
-            # y = y.zfill(math.ceil(len(y)/gg)*gg)
-            y = [y[i:i+gg] for i in range(0, len(y), gg)] # gg位一組
-            print(y)
-            y = [int(i, 2) for i in y] # 二進位轉十進位
-            print(y)
-            for z in y:
-                Resolve_data["Regions"][i]["decode_BlockStates"].append(Resolve_data["Regions"][i]["BlockStatePalette"][z])
-                print(Resolve_data["Regions"][i]["BlockStatePalette"][z])
-
+            bitlist.add(y)
+        print(bitlist.calc())
+        Resolve_data["Regions"][i]["decode_BlockStates"] = bitlist.calc()
+        print("decode success")
     return Resolve_data
