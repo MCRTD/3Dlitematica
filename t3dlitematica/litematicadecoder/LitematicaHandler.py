@@ -56,14 +56,11 @@ def decode_BlockStates(Resolve_data):
             gg = 1
             while bytelong > 2**gg:
                 gg += 1
-            y = "".join([j for j in [y[i:i+8] for i in range(0, len(y), 8)][::-1]]) # 8位一組反轉
-            y = y[::-1]
-            # y = y[4:]
             print(y)
-            print(gg)
-            
-            y = y.zfill(math.ceil(len(y)/gg)*gg) # 補位直到可以被gg整除
-            print("tttt"+y)
+            y = [j for j in [y[i:i+8] for i in range(0, len(y), 8)][::-1]] # 8位一組
+            print(y)
+            y = "".join(y)
+            # y = y.zfill(math.ceil(len(y)/gg)*gg)
             y = [y[i:i+gg] for i in range(0, len(y), gg)] # gg位一組
             print(y)
             y = [int(i, 2) for i in y] # 二進位轉十進位
