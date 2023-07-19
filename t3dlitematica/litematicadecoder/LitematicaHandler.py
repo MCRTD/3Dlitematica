@@ -1,6 +1,6 @@
 from . import NBTHandler
 from . import Utilities
-
+import math
 
 def Resolve(fPath):
     litematic = open(fPath , "rb")
@@ -8,9 +8,14 @@ def Resolve(fPath):
     return decode_BlockStates(to_human(NBTHandler.Resolve(binSource)))
 
 def to_human(Resolve_data):
+    for i in Resolve_data["Metadata"]["EnclosingSize"]:
+        Resolve_data["Metadata"]["EnclosingSize"][i] = str(int(int(Resolve_data["Metadata"]["EnclosingSize"][i])/16777216))
     for i in Resolve_data["Regions"]:
         for y in Resolve_data["Regions"][i]["Size"]:
             Resolve_data["Regions"][i]["Size"][y] = str(int(int(Resolve_data["Regions"][i]["Size"][y])/16777216))
+
+        for y in Resolve_data["Regions"][i]["Position"]:
+            Resolve_data["Regions"][i]["Position"][y] = str(int(int(Resolve_data["Regions"][i]["Position"][y])/16777216))
         for y,z in enumerate(Resolve_data["Regions"][i]["TileEntities"]):
             # for z in Resolve_data["Regions"][i]["TileEntities"][y]:
             #     if z == "x" or z == "y" or z == "z":
@@ -46,34 +51,25 @@ def decode_BlockStates(Resolve_data):
         for y in Resolve_data["Regions"][i]["BlockStates"]:
             y = int(y)
             y = bin(y & 0xffffffffffffffff)[2:].zfill(64)
-            y = y[::-1]
-            y = y[y.find("1"):]
+
             bytelong = len(Resolve_data["Regions"][i]["BlockStatePalette"])
             gg = 1
             while bytelong > 2**gg:
                 gg += 1
-            y = [y[i:i+gg] for i in range(0, len(y), gg)]
-            y = [int(i, 2) for i in y]
+            y = "".join([j for j in [y[i:i+8] for i in range(0, len(y), 8)][::-1]]) # 8位一組反轉
+            y = y[::-1]
+            # y = y[4:]
+            print(y)
+            print(gg)
+            
+            y = y.zfill(math.ceil(len(y)/gg)*gg) # 補位直到可以被gg整除
+            print("tttt"+y)
+            y = [y[i:i+gg] for i in range(0, len(y), gg)] # gg位一組
+            print(y)
+            y = [int(i, 2) for i in y] # 二進位轉十進位
+            print(y)
             for z in y:
                 Resolve_data["Regions"][i]["decode_BlockStates"].append(Resolve_data["Regions"][i]["BlockStatePalette"][z])
+                print(Resolve_data["Regions"][i]["BlockStatePalette"][z])
 
     return Resolve_data
-
-
-
-            
-
-            
-
-
-
-            
-
-
-
-
-
-
-
-    return Resolve_data
-
