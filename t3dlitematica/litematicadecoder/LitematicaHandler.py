@@ -1,7 +1,6 @@
 from . import NBTHandler
 from . import Utilities
 from . import bitstack
-import math
 
 def Resolve(fPath):
     litematic = open(fPath , "rb")
