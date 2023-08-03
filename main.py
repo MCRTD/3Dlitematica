@@ -1,4 +1,4 @@
-from t3dlitematica.litematicadecoder import Resolve
+from t3dlitematica import Resolve
 import json
 # data = Resolve("./randomtest.litematic")
 data = Resolve("./20gt.litematic")
