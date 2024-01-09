@@ -25,14 +25,14 @@ def to_human(Resolve_data):
                     Resolve_data["Regions"][i]["TileEntities"][y][hh] = str(int(int(Resolve_data["Regions"][i]["TileEntities"][y][hh])/16777216))
 
     return Resolve_data
-            
+
 
 def decode_BlockStates(Resolve_data):
 
     #   "BlockStates":[
     #      "360323773641625836",
     #      "977288815838265344"
-    #   ]    
+    #   ]
     #     (palette entries 0x00 through 0x1d are valid):
 
     # 0x00 - air
