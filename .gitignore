@@ -26,3 +26,5 @@ coverage.xml
 *.litematic
 test.json
 temp/
+*.obj
+*.mtl

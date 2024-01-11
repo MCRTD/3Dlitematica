@@ -1,5 +1,7 @@
 import json
+from mctoobj import Enity
 from pprint import pprint
+import os
 class objhandel:
 
     def __init__(self,name,data,size) -> None:
@@ -8,6 +10,7 @@ class objhandel:
         self.output = "# generate by 3dlitematica"+"\n"+"g "+name+"\n"
         self.tmpdata = {}
         self.vtof = {} # 對應表
+        self.textures = []
         self.main(data,size)
 
     def main(self,data,size):
@@ -22,7 +25,10 @@ class objhandel:
                     if data[count]["Name"] == "minecraft:air":
                         pass
                     else:
-                        self.addblock(i,j,k,data[count]["Name"])
+                        try:
+                            self.addEnity(Enity(i,j,k,data[count]))
+                        except:
+                            self.addblock(i,j,k,data[count]["Name"])
                     print(count)
                     count += 1
 
@@ -48,6 +54,13 @@ class objhandel:
     f 7//1 8//2 9//3
     f ...
     """
+
+    def addEnity(self,Enity:Enity):
+        if Enity.objdata["v"] == []:
+            raise Exception("Enity.objdata[\"v\"] is empty")
+        self.tmpdata[(Enity.x,Enity.y,Enity.z)] = Enity.objdata
+
+
     def addblock(self,x,y,z,blockname):
         self.tmpdata[(x,y,z)] = {
             "blockname":blockname,
@@ -76,11 +89,25 @@ class objhandel:
                 [8,5,1,4]
             ]
         }
-    
+
     def writeobj(self):
         _v = ""
         _vt = ""
         _f = ""
+        # load texture and generate mtl file
+        temp = ""
+        for i in self.tmpdata:
+            if "textures" in self.tmpdata[i]:
+                for j in set(self.tmpdata[i]["textures"]):
+                    if j not in self.textures:
+                        self.textures.append(j)
+                        temp += "newmtl "+j.split("/")[-1]+"\n"
+                        temp += "Ka 1.000 1.000 1.000\n"
+                        temp += os.path.join("temp","textures",j,".png")+"\n"
+                        temp += "\n"
+        with open(self.name+".mtl","w") as f:
+            f.write(temp)
+
         for blocks in self.tmpdata:
             for v in self.tmpdata[blocks]["v"]:
                 if self.vtof.get((v[0],v[1],v[2])) == None:
@@ -89,12 +116,15 @@ class objhandel:
             # for vt in self.tmpdata[blocks]["vt"]:
             #     _vt += "vt "+str(vt[0])+" "+str(vt[1])+"\n"
             for f in self.tmpdata[blocks]["f"]:
+                if "textures" in self.tmpdata[blocks]:
+                    _f += "usemtl "+self.tmpdata[blocks]["textures"][0].split("/")[-1]+"\n"
                 _f += "f "
                 for i in f:
                     _f += str(self.vtof[(self.tmpdata[blocks]["v"][i-1][0],self.tmpdata[blocks]["v"][i-1][1],self.tmpdata[blocks]["v"][i-1][2])])+" "
                 _f += "\n"
             _f += "#DEBUG \n"
         pprint(self.vtof)
+        self.output += "mtllib "+self.name+".mtl"+"\n"
         self.output += _v+_vt+_f
         self.objfile.write(self.output)
 

@@ -35,8 +35,7 @@ class convert_texturepack:
             with open(os.path.join(self.mainpath, "models", path), "r", encoding="utf8") as f:
                 blockmodel = f.read()
                 tempload = json.loads(blockmodel)
-            blockmodel = blockmodel.replace("minecraft:block/", "")
-            blockmodel = blockmodel.replace("block/", "")
+            blockmodel = blockmodel.replace("minecraft:", "")
             blockmodel = json.loads(blockmodel)
             if "parent" in blockmodel and blockmodel["parent"]  not in self.blocksdata["models"]:
                 load_model(tempload["parent"].split(":")[-1]+".json")
