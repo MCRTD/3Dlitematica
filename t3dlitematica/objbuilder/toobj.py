@@ -10,6 +10,7 @@ class objhandel:
         self.output = "# generate by 3dlitematica"+"\n"+"g "+name+"\n"
         self.tmpdata = {}
         self.vtof = {} # 對應表
+        self.vtovt = {}
         self.textures = []
         self.main(data,size)
 
@@ -26,9 +27,9 @@ class objhandel:
                         pass
                     else:
                         try:
-                            self.addEnity(Enity(i,j,k,data[count]))
+                            self.addEnity(Enity(i/10,j/10,k/10,data[count]))
                         except:
-                            self.addblock(i,j,k,data[count]["Name"])
+                            self.addblock(i/10,j/10,k/10,data[count]["Name"])
                     print(count)
                     count += 1
 
@@ -66,13 +67,13 @@ class objhandel:
             "blockname":blockname,
             "v":[
                 [x,y,z],
-                [x+1,y,z],
-                [x+1,y,z+1],
-                [x,y,z+1],
-                [x,y+1,z],
-                [x+1,y+1,z],
-                [x+1,y+1,z+1],
-                [x,y+1,z+1]
+                [x+0.1,y,z],
+                [x+0.1,y,z+0.1],
+                [x,y,z+0.1],
+                [x,y+0.1,z],
+                [x+0.1,y+0.1,z],
+                [x+0.1,y+0.1,z+0.1],
+                [x,y+0.1,z+0.1]
             ],
             "vt":[
                 [0,0],
@@ -91,10 +92,9 @@ class objhandel:
         }
 
     def writeobj(self):
-        _v = ""
-        _vt = ""
-        _f = ""
-        # load texture and generate mtl file
+        # TODO: 將方塊加入到group裡面
+        # https://blog.csdn.net/xyh930929/article/details/82260581
+        # 格式 ：f v/vt/vn v/vt/vn v/vt/vn（f 顶点索引 / 纹理坐标索引 / 顶点法向量索引）
         temp = ""
         for i in self.tmpdata:
             if "textures" in self.tmpdata[i]:
@@ -103,29 +103,41 @@ class objhandel:
                         self.textures.append(j)
                         temp += "newmtl "+j.split("/")[-1]+"\n"
                         temp += "Ka 1.000 1.000 1.000\n"
-                        temp += os.path.join("temp","textures",j,".png")+"\n"
+                        temp += "map_Kd "+os.path.join("temp","textures",j+".png")+"\n"
                         temp += "\n"
+        temp += "newmtl "+"missing"+"\n"
+        temp += "Ka 1.000 1.000 1.000\n"
+        temp += "map_Kd "+os.path.join("resource","Minecraft_missing_texture_block.svg.png")+"\n"
+        temp += "\n"
         with open(self.name+".mtl","w") as f:
             f.write(temp)
 
+        oneblock = ""
         for blocks in self.tmpdata:
             for v in self.tmpdata[blocks]["v"]:
                 if self.vtof.get((v[0],v[1],v[2])) == None:
-                    _v += "v "+str(v[0])+" "+str(v[1])+" "+str(v[2])+"\n"
+                    oneblock += "v "+str(v[0])+" "+str(v[1])+" "+str(v[2])+"\n"
                     self.vtof[(v[0],v[1],v[2])] = len(self.vtof)+1
-            # for vt in self.tmpdata[blocks]["vt"]:
-            #     _vt += "vt "+str(vt[0])+" "+str(vt[1])+"\n"
+            for vt in self.tmpdata[blocks]["vt"]:
+                if self.vtovt.get((vt[0],vt[1])) == None:
+                    self.vtovt[(vt[0],vt[1])] = len(self.vtovt)+1
+                    oneblock += "vt "+str(vt[0])+" "+str(vt[1])+"\n"
             for f in self.tmpdata[blocks]["f"]:
                 if "textures" in self.tmpdata[blocks]:
-                    _f += "usemtl "+self.tmpdata[blocks]["textures"][0].split("/")[-1]+"\n"
-                _f += "f "
+                    oneblock += "usemtl "+self.tmpdata[blocks]["textures"][0].split("/")[-1]+"\n"
+                else:
+                    oneblock += "usemtl "+"missing"+"\n"
+                oneblock += "f "
+                ct = 0
                 for i in f:
-                    _f += str(self.vtof[(self.tmpdata[blocks]["v"][i-1][0],self.tmpdata[blocks]["v"][i-1][1],self.tmpdata[blocks]["v"][i-1][2])])+" "
-                _f += "\n"
-            _f += "#DEBUG \n"
+                    oneblock += str(self.vtof[(self.tmpdata[blocks]["v"][i-1][0],self.tmpdata[blocks]["v"][i-1][1],self.tmpdata[blocks]["v"][i-1][2])])+ \
+                        "/"+str(self.vtovt[(self.tmpdata[blocks]["vt"][ct][0],self.tmpdata[blocks]["vt"][ct][1])])+" "
+                    ct += 1
+                oneblock += "\n"
+            oneblock += "#DEBUG \n"
         pprint(self.vtof)
         self.output += "mtllib "+self.name+".mtl"+"\n"
-        self.output += _v+_vt+_f
+        self.output += oneblock
         self.objfile.write(self.output)
 
 

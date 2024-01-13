@@ -135,8 +135,8 @@ class Enity:
         pos2 = element["to"]
 
         for i in range(3):
-            pos1[i] /= 16
-            pos2[i] /= 16
+            pos1[i] /= (16*10)
+            pos2[i] /= (16*10)
 
         # 六個面 = down up north south west east
         for i in element["faces"]:
