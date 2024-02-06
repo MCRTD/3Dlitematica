@@ -70,4 +70,4 @@ class convert_texturepack:
 
 
 if __name__ == "__main__":
-    convert_texturepack(r"C:\Users\phill\OneDrive\桌面\codetool\VanillaDefault+1.20", r"C:\Users\phill\OneDrive\Documents\coed_thing\3Dlitematica\temp")
+    convert_texturepack(r"C:\Users\phill\Downloads\VanillaDefault 1.20.4", r"C:\Users\phill\Documents\code\3Dlitematica\temp")

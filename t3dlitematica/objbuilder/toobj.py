@@ -1,4 +1,6 @@
 import json
+import sys
+import traceback
 from mctoobj import Enity
 from pprint import pprint
 import os
@@ -28,8 +30,18 @@ class objhandel:
                     else:
                         try:
                             self.addEnity(Enity(i/10,j/10,k/10,data[count]))
-                        except:
+                        except Exception as e:
+                            error_class = e.__class__.__name__
+                            detail = e.args[0]
+                            cl, exc, tb = sys.exc_info()
+                            lastCallStack = traceback.extract_tb(tb)[-1]
+                            fileName = lastCallStack[0]
+                            lineNum = lastCallStack[1]
+                            funcName = lastCallStack[2]
+                            errMsg = "File \"{}\", line {}, in {}: [{}] {}".format(fileName, lineNum, funcName, error_class, detail)
+                            print(f"[UserData] | {errMsg}")
                             self.addblock(i/10,j/10,k/10,data[count]["Name"])
+                            print(e)
                     print(count)
                     count += 1
 
@@ -124,7 +136,10 @@ class objhandel:
                     oneblock += "vt "+str(vt[0])+" "+str(vt[1])+"\n"
             for f in self.tmpdata[blocks]["f"]:
                 if "textures" in self.tmpdata[blocks]:
-                    oneblock += "usemtl "+self.tmpdata[blocks]["textures"][0].split("/")[-1]+"\n"
+                    try:
+                        oneblock += "usemtl "+self.tmpdata[blocks]["textures"][0].split("/")[-1]+"\n"
+                    except:
+                        oneblock += "usemtl "+"missing"+"\n"
                 else:
                     oneblock += "usemtl "+"missing"+"\n"
                 oneblock += "f "
@@ -135,7 +150,7 @@ class objhandel:
                     ct += 1
                 oneblock += "\n"
             oneblock += "#DEBUG \n"
-        pprint(self.vtof)
+        # pprint(self.vtof)
         self.output += "mtllib "+self.name+".mtl"+"\n"
         self.output += oneblock
         self.objfile.write(self.output)

@@ -72,12 +72,23 @@ class Enity:
             return "custom debug info: exponent is " + self.parents
 
     def start(self):
-        with open(r"C:\Users\phill\OneDrive\Documents\coed_thing\3Dlitematica\temp\output.json","r",encoding="utf8") as f:
+        with open(r"C:\Users\phill\Documents\code\3Dlitematica\temp\output.json","r",encoding="utf8") as f:
             self.thisdata = json.load(f)[self.name]
         if "variants" in self.thisdata:
             for i in self.thisdata["variants"]:
                 if i != "":
-                    value = i.split(",")
+                    flag = False
+                    values = i.split(",")
+                    for value in values:
+                        value = value.split("=")
+                        if value[0] in self.blockdata["Properties"]:
+                            if value[1] == self.blockdata["Properties"][value[0]]:
+                                flag = True
+                            else:
+                                flag = False
+                                break
+                    if flag:
+                        self.load_model(self.thisdata["variants"][i]["model"])
                 else:
                     self.load_model(self.thisdata["variants"][i]["model"])
         elif "multipart" in self.thisdata:
@@ -85,10 +96,12 @@ class Enity:
         for i in self.element:
             self.build_element(i)
         print("-"*50)
-        pprint(self.objdata)
+        if self.objdata['blockname'] == "observer":
+            pprint(self.objdata)
+            pprint(self.textures)
 
     def load_model(self,modelname,isparent=False):
-        with open(r"C:\Users\phill\OneDrive\Documents\coed_thing\3Dlitematica\temp\output.json","r",encoding="utf8") as f:
+        with open(r"C:\Users\phill\Documents\code\3Dlitematica\temp\output.json","r",encoding="utf8") as f:
             model = json.load(f)["models"][modelname]
             if "parent" in model:
                 self.load_model(model["parent"].split("/")[-1],True)
@@ -110,10 +123,12 @@ class Enity:
             return thelist.index(item)+1
 
     def add_texture(self,texturename):
+        print(texturename)
         if texturename in self.textures:
             if "#" in self.textures[texturename]:
                 temp = self.textures[texturename]
                 temp = temp.replace("#","")
+                print(temp)
                 self.add_texture(temp)
             else:
                 self.objdata["textures"].append(self.textures[texturename])
@@ -149,7 +164,10 @@ class Enity:
                         [pos1[0]+self.x,pos2[1]+self.y,pos2[2]+self.z]
                     ]
                 )
-                self.add_texture(i)
+                if "texture" in element["faces"][i]:
+                    self.add_texture(element["faces"][i]["texture"].replace("#",""))
+                else:
+                    self.add_texture(i)
             elif i == "down":
                 self.add_F(
                     [
@@ -159,7 +177,10 @@ class Enity:
                         [pos1[0]+self.x,pos1[1]+self.y,pos2[2]+self.z]
                     ]
                 )
-                self.add_texture(i)
+                if "texture" in element["faces"][i]:
+                    self.add_texture(element["faces"][i]["texture"].replace("#",""))
+                else:
+                    self.add_texture(i)
             elif i == "north":
                 self.add_F(
                     [
@@ -169,7 +190,10 @@ class Enity:
                         [pos1[0]+self.x,pos2[1]+self.y,pos1[2]+self.z]
                     ]
                 )
-                self.add_texture(i)
+                if "texture" in element["faces"][i]:
+                    self.add_texture(element["faces"][i]["texture"].replace("#",""))
+                else:
+                    self.add_texture(i)
             elif i == "south":
                 self.add_F(
                     [
@@ -179,7 +203,10 @@ class Enity:
                         [pos1[0]+self.x,pos2[1]+self.y,pos2[2]+self.z]
                     ]
                 )
-                self.add_texture(i)
+                if "texture" in element["faces"][i]:
+                    self.add_texture(element["faces"][i]["texture"].replace("#",""))
+                else:
+                    self.add_texture(i)
             elif i == "west":
                 self.add_F(
                     [
@@ -189,7 +216,10 @@ class Enity:
                         [pos1[0]+self.x,pos2[1]+self.y,pos1[2]+self.z]
                     ]
                 )
-                self.add_texture(i)
+                if "texture" in element["faces"][i]:
+                    self.add_texture(element["faces"][i]["texture"].replace("#",""))
+                else:
+                    self.add_texture(i)
             elif i == "east":
                 self.add_F(
                     [
@@ -199,7 +229,10 @@ class Enity:
                         [pos2[0]+self.x,pos2[1]+self.y,pos1[2]+self.z]
                     ]
                 )
-                self.add_texture(i)
+                if "texture" in element["faces"][i]:
+                    self.add_texture(element["faces"][i]["texture"].replace("#",""))
+                else:
+                    self.add_texture(i)
         self.objdata["vt"].append([0,0])
         self.objdata["vt"].append([1,0])
         self.objdata["vt"].append([1,1])
