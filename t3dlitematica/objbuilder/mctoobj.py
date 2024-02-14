@@ -96,7 +96,7 @@ class Enity:
         for i in self.element:
             self.build_element(i)
         print("-"*50)
-        if self.objdata['blockname'] == "observer":
+        if self.objdata['blockname'] == "sticky_piston":
             pprint(self.objdata)
             pprint(self.textures)
 
@@ -135,8 +135,14 @@ class Enity:
                 return
 
 
-    def add_F(self,listV):
+    def add_F(self,listV,rotate=0):
         f = []
+        if rotate == 90:
+            listV = [listV[3],listV[0],listV[1],listV[2]]
+        if rotate == 180:
+            listV = [listV[2],listV[3],listV[0],listV[1]]
+        elif rotate == 270:
+            listV = [listV[1],listV[2],listV[3],listV[0]]
         for i in listV:
             f.append(self.append_pos(self.objdata["v"],i))
         self.objdata["f"].append(f)
@@ -155,6 +161,10 @@ class Enity:
 
         # 六個面 = down up north south west east
         for i in element["faces"]:
+            if "rotation" in element["faces"][i]:
+                rotate = element["faces"][i]["rotation"]
+            else:
+                rotate = 0
             if i == "up":
                 self.add_F(
                     [
@@ -162,7 +172,8 @@ class Enity:
                         [pos2[0]+self.x,pos2[1]+self.y,pos1[2]+self.z],
                         [pos2[0]+self.x,pos2[1]+self.y,pos2[2]+self.z],
                         [pos1[0]+self.x,pos2[1]+self.y,pos2[2]+self.z]
-                    ]
+                    ],
+                    rotate
                 )
                 if "texture" in element["faces"][i]:
                     self.add_texture(element["faces"][i]["texture"].replace("#",""))
@@ -175,7 +186,8 @@ class Enity:
                         [pos2[0]+self.x,pos1[1]+self.y,pos1[2]+self.z],
                         [pos2[0]+self.x,pos1[1]+self.y,pos2[2]+self.z],
                         [pos1[0]+self.x,pos1[1]+self.y,pos2[2]+self.z]
-                    ]
+                    ],
+                    rotate
                 )
                 if "texture" in element["faces"][i]:
                     self.add_texture(element["faces"][i]["texture"].replace("#",""))
@@ -188,7 +200,8 @@ class Enity:
                         [pos2[0]+self.x,pos1[1]+self.y,pos1[2]+self.z],
                         [pos2[0]+self.x,pos2[1]+self.y,pos1[2]+self.z],
                         [pos1[0]+self.x,pos2[1]+self.y,pos1[2]+self.z]
-                    ]
+                    ],
+                    rotate
                 )
                 if "texture" in element["faces"][i]:
                     self.add_texture(element["faces"][i]["texture"].replace("#",""))
@@ -201,7 +214,8 @@ class Enity:
                         [pos2[0]+self.x,pos1[1]+self.y,pos2[2]+self.z],
                         [pos2[0]+self.x,pos2[1]+self.y,pos2[2]+self.z],
                         [pos1[0]+self.x,pos2[1]+self.y,pos2[2]+self.z]
-                    ]
+                    ],
+                    rotate
                 )
                 if "texture" in element["faces"][i]:
                     self.add_texture(element["faces"][i]["texture"].replace("#",""))
@@ -214,7 +228,8 @@ class Enity:
                         [pos1[0]+self.x,pos1[1]+self.y,pos2[2]+self.z],
                         [pos1[0]+self.x,pos2[1]+self.y,pos2[2]+self.z],
                         [pos1[0]+self.x,pos2[1]+self.y,pos1[2]+self.z]
-                    ]
+                    ],
+                    rotate
                 )
                 if "texture" in element["faces"][i]:
                     self.add_texture(element["faces"][i]["texture"].replace("#",""))
@@ -227,7 +242,8 @@ class Enity:
                         [pos2[0]+self.x,pos1[1]+self.y,pos2[2]+self.z],
                         [pos2[0]+self.x,pos2[1]+self.y,pos2[2]+self.z],
                         [pos2[0]+self.x,pos2[1]+self.y,pos1[2]+self.z]
-                    ]
+                    ],
+                    rotate
                 )
                 if "texture" in element["faces"][i]:
                     self.add_texture(element["faces"][i]["texture"].replace("#",""))
