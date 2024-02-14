@@ -134,10 +134,11 @@ class objhandel:
                 if self.vtovt.get((vt[0],vt[1])) == None:
                     self.vtovt[(vt[0],vt[1])] = len(self.vtovt)+1
                     oneblock += "vt "+str(vt[0])+" "+str(vt[1])+"\n"
+            ct1 = 0
             for f in self.tmpdata[blocks]["f"]:
                 if "textures" in self.tmpdata[blocks]:
                     try:
-                        oneblock += "usemtl "+self.tmpdata[blocks]["textures"][0].split("/")[-1]+"\n"
+                        oneblock += "usemtl "+self.tmpdata[blocks]["textures"][ct1].split("/")[-1]+"\n"
                     except:
                         oneblock += "usemtl "+"missing"+"\n"
                 else:
@@ -149,6 +150,7 @@ class objhandel:
                         "/"+str(self.vtovt[(self.tmpdata[blocks]["vt"][ct][0],self.tmpdata[blocks]["vt"][ct][1])])+" "
                     ct += 1
                 oneblock += "\n"
+                ct1 += 1
             oneblock += "#DEBUG \n"
         # pprint(self.vtof)
         self.output += "mtllib "+self.name+".mtl"+"\n"
