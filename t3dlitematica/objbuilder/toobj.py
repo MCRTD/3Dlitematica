@@ -161,6 +161,6 @@ class objhandel:
 if __name__ == "__main__":
     with open("./test.json", "r",encoding="utf8") as f:
         data = json.load(f)
-    size = (int(data["Regions"][" 1"]["Size"]["x"]),int(data["Regions"][" 1"]["Size"]["y"]),int(data["Regions"][" 1"]["Size"]["z"]))
-    data = data["Regions"][" 1"]["decode_BlockStates"]
+    size = (int(data["Regions"]["Unnamed"]["Size"]["x"]),int(data["Regions"]["Unnamed"]["Size"]["y"]),int(data["Regions"]["Unnamed"]["Size"]["z"]))
+    data = data["Regions"]["Unnamed"]["decode_BlockStates"]
     objhandel("test",data,size)

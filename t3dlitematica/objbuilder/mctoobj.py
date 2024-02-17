@@ -1,4 +1,5 @@
 import json
+import math
 from pprint import pprint
 # example:
 #         "cube": {
@@ -56,6 +57,7 @@ class Enity:
         self.x = x
         self.y = y
         self.z = z
+        self.center = [x+0.05,y+0.05,z+0.05]
         self.parents = {}
         self.thisdata = None
         self.textures = {}
@@ -67,12 +69,14 @@ class Enity:
             "f": [],
             "textures": []
         }
+        self.rotatemode = None
+        self.rotate = 0
         self.start()
     def __getstate__(self):
             return "custom debug info: exponent is " + self.parents
 
     def start(self):
-        with open(r"C:\Users\phill\Documents\code\3Dlitematica\temp\output.json","r",encoding="utf8") as f:
+        with open(r"C:\Users\phill\OneDrive\Documents\coed_thing\3Dlitematica\temp\output.json","r",encoding="utf8") as f:
             self.thisdata = json.load(f)[self.name]
         if "variants" in self.thisdata:
             for i in self.thisdata["variants"]:
@@ -88,6 +92,12 @@ class Enity:
                                 flag = False
                                 break
                     if flag:
+                        if "y" in self.thisdata["variants"][i]:
+                            self.rotatemode = "y"
+                            self.rotate = self.thisdata["variants"][i]["y"]
+                        elif "x" in self.thisdata["variants"][i]:
+                            self.rotatemode = "x"
+                            self.rotate = self.thisdata["variants"][i]["x"]
                         self.load_model(self.thisdata["variants"][i]["model"])
                 else:
                     self.load_model(self.thisdata["variants"][i]["model"])
@@ -96,12 +106,12 @@ class Enity:
         for i in self.element:
             self.build_element(i)
         print("-"*50)
-        if self.objdata['blockname'] == "sticky_piston":
+        if self.objdata['blockname'] == "magenta_glazed_terracotta":
             pprint(self.objdata)
             pprint(self.textures)
 
     def load_model(self,modelname,isparent=False):
-        with open(r"C:\Users\phill\Documents\code\3Dlitematica\temp\output.json","r",encoding="utf8") as f:
+        with open(r"C:\Users\phill\OneDrive\Documents\coed_thing\3Dlitematica\temp\output.json","r",encoding="utf8") as f:
             model = json.load(f)["models"][modelname]
             if "parent" in model:
                 self.load_model(model["parent"].split("/")[-1],True)
@@ -168,10 +178,10 @@ class Enity:
             if i == "up":
                 self.add_F(
                     [
-                        [pos1[0]+self.x,pos2[1]+self.y,pos1[2]+self.z],
-                        [pos2[0]+self.x,pos2[1]+self.y,pos1[2]+self.z],
+                        [pos1[0]+self.x,pos2[1]+self.y,pos2[2]+self.z],
                         [pos2[0]+self.x,pos2[1]+self.y,pos2[2]+self.z],
-                        [pos1[0]+self.x,pos2[1]+self.y,pos2[2]+self.z]
+                        [pos2[0]+self.x,pos2[1]+self.y,pos1[2]+self.z],
+                        [pos1[0]+self.x,pos2[1]+self.y,pos1[2]+self.z],
                     ],
                     rotate
                 )
@@ -196,10 +206,10 @@ class Enity:
             elif i == "north":
                 self.add_F(
                     [
-                        [pos1[0]+self.x,pos1[1]+self.y,pos1[2]+self.z],
                         [pos2[0]+self.x,pos1[1]+self.y,pos1[2]+self.z],
+                        [pos1[0]+self.x,pos1[1]+self.y,pos1[2]+self.z],
+                        [pos1[0]+self.x,pos2[1]+self.y,pos1[2]+self.z],
                         [pos2[0]+self.x,pos2[1]+self.y,pos1[2]+self.z],
-                        [pos1[0]+self.x,pos2[1]+self.y,pos1[2]+self.z]
                     ],
                     rotate
                 )
@@ -238,10 +248,10 @@ class Enity:
             elif i == "east":
                 self.add_F(
                     [
-                        [pos2[0]+self.x,pos1[1]+self.y,pos1[2]+self.z],
                         [pos2[0]+self.x,pos1[1]+self.y,pos2[2]+self.z],
+                        [pos2[0]+self.x,pos1[1]+self.y,pos1[2]+self.z],
+                        [pos2[0]+self.x,pos2[1]+self.y,pos1[2]+self.z],
                         [pos2[0]+self.x,pos2[1]+self.y,pos2[2]+self.z],
-                        [pos2[0]+self.x,pos2[1]+self.y,pos1[2]+self.z]
                     ],
                     rotate
                 )
@@ -254,6 +264,28 @@ class Enity:
         self.objdata["vt"].append([1,1])
         self.objdata["vt"].append([0,1])
 
+        if self.rotatemode == "y":
+            for i in range(len(self.objdata["v"])):
+                self.objdata["v"][i] = self.rotate_y(self.objdata["v"][i],self.rotate, self.center)
+        elif self.rotatemode == "x":
+            for i in range(len(self.objdata["v"])):
+                self.objdata["v"][i] = self.rotate_x(self.objdata["v"][i],self.rotate, self.center)
+
+    def rotate_y(self,point,angle,center):
+        angle = math.radians(angle)
+        x = point[0] - center[0]
+        z = point[2] - center[2]
+        point[0] = x * math.cos(angle) - z * math.sin(angle) + center[0]
+        point[2] = x * math.sin(angle) + z * math.cos(angle) + center[2]
+        return point
+
+    def rotate_x(self,point,angle,center):
+        angle = math.radians(angle)
+        y = point[1] - center[1]
+        z = point[2] - center[2]
+        point[1] = y * math.cos(angle) - z * math.sin(angle) + center[1]
+        point[2] = y * math.sin(angle) + z * math.cos(angle) + center[2]
+        return point
 
 
 
