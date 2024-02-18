@@ -49,34 +49,33 @@ from pprint import pprint
 
 # element 裡面的 from , to 是指一個block的3維空間的座標
 
-class Enity:
 
-    def __init__(self, x,y,z,blockdata):
+class Enity:
+    def __init__(self, x, y, z, blockdata):
         self.blockdata = blockdata
-        self.name = blockdata["Name"].replace("minecraft:","")
+        self.name = blockdata["Name"].replace("minecraft:", "")
         self.x = x
         self.y = y
         self.z = z
-        self.center = [x+0.05,y+0.05,z+0.05]
+        self.center = [x + 0.05, y + 0.05, z + 0.05]
         self.parents = {}
         self.thisdata = None
         self.textures = {}
         self.element = {}
-        self.objdata = {
-            "blockname": self.name,
-            "v": [],
-            "vt": [],
-            "f": [],
-            "textures": []
-        }
+        self.objdata = {"blockname": self.name, "v": [], "vt": [], "f": [], "textures": []}
         self.rotatemode = None
         self.rotate = 0
         self.start()
+
     def __getstate__(self):
-            return "custom debug info: exponent is " + self.parents
+        return "custom debug info: exponent is " + self.parents
 
     def start(self):
-        with open(r"C:\Users\phill\OneDrive\Documents\coed_thing\3Dlitematica\temp\output.json","r",encoding="utf8") as f:
+        with open(
+            r"C:\Users\phill\OneDrive\Documents\coed_thing\3Dlitematica\temp\output.json",
+            "r",
+            encoding="utf8",
+        ) as f:
             self.thisdata = json.load(f)[self.name]
         if "variants" in self.thisdata:
             for i in self.thisdata["variants"]:
@@ -105,16 +104,20 @@ class Enity:
             ...
         for i in self.element:
             self.build_element(i)
-        print("-"*50)
-        if self.objdata['blockname'] == "magenta_glazed_terracotta":
+        print("-" * 50)
+        if self.objdata["blockname"] == "magenta_glazed_terracotta":
             pprint(self.objdata)
             pprint(self.textures)
 
-    def load_model(self,modelname,isparent=False):
-        with open(r"C:\Users\phill\OneDrive\Documents\coed_thing\3Dlitematica\temp\output.json","r",encoding="utf8") as f:
+    def load_model(self, modelname, isparent=False):
+        with open(
+            r"C:\Users\phill\OneDrive\Documents\coed_thing\3Dlitematica\temp\output.json",
+            "r",
+            encoding="utf8",
+        ) as f:
             model = json.load(f)["models"][modelname]
             if "parent" in model:
-                self.load_model(model["parent"].split("/")[-1],True)
+                self.load_model(model["parent"].split("/")[-1], True)
             if isparent:
                 self.parents[modelname] = model
             if "textures" in model:
@@ -122,7 +125,7 @@ class Enity:
             if "elements" in model:
                 self.element = model["elements"]
 
-    def append_pos(self,thelist,item):
+    def append_pos(self, thelist, item):
         """
         append 到 list並回傳index
         """
@@ -130,35 +133,33 @@ class Enity:
             thelist.append(item)
             return len(thelist)
         else:
-            return thelist.index(item)+1
+            return thelist.index(item) + 1
 
-    def add_texture(self,texturename):
+    def add_texture(self, texturename):
         print(texturename)
         if texturename in self.textures:
             if "#" in self.textures[texturename]:
                 temp = self.textures[texturename]
-                temp = temp.replace("#","")
+                temp = temp.replace("#", "")
                 print(temp)
                 self.add_texture(temp)
             else:
                 self.objdata["textures"].append(self.textures[texturename])
                 return
 
-
-    def add_F(self,listV,rotate=0):
+    def add_F(self, listV, rotate=0):
         f = []
         if rotate == 90:
-            listV = [listV[3],listV[0],listV[1],listV[2]]
+            listV = [listV[3], listV[0], listV[1], listV[2]]
         if rotate == 180:
-            listV = [listV[2],listV[3],listV[0],listV[1]]
+            listV = [listV[2], listV[3], listV[0], listV[1]]
         elif rotate == 270:
-            listV = [listV[1],listV[2],listV[3],listV[0]]
+            listV = [listV[1], listV[2], listV[3], listV[0]]
         for i in listV:
-            f.append(self.append_pos(self.objdata["v"],i))
+            f.append(self.append_pos(self.objdata["v"], i))
         self.objdata["f"].append(f)
 
-
-    def build_element(self,element):
+    def build_element(self, element):
         # 一個方塊 = 1*1*1
         # 數據給的方塊 = 16*16*16
         # 轉換為 1*1*1
@@ -166,8 +167,8 @@ class Enity:
         pos2 = element["to"]
 
         for i in range(3):
-            pos1[i] /= (16*10)
-            pos2[i] /= (16*10)
+            pos1[i] /= 16 * 10
+            pos2[i] /= 16 * 10
 
         # 六個面 = down up north south west east
         for i in element["faces"]:
@@ -178,100 +179,100 @@ class Enity:
             if i == "up":
                 self.add_F(
                     [
-                        [pos1[0]+self.x,pos2[1]+self.y,pos2[2]+self.z],
-                        [pos2[0]+self.x,pos2[1]+self.y,pos2[2]+self.z],
-                        [pos2[0]+self.x,pos2[1]+self.y,pos1[2]+self.z],
-                        [pos1[0]+self.x,pos2[1]+self.y,pos1[2]+self.z],
+                        [pos1[0] + self.x, pos2[1] + self.y, pos2[2] + self.z],
+                        [pos2[0] + self.x, pos2[1] + self.y, pos2[2] + self.z],
+                        [pos2[0] + self.x, pos2[1] + self.y, pos1[2] + self.z],
+                        [pos1[0] + self.x, pos2[1] + self.y, pos1[2] + self.z],
                     ],
-                    rotate
+                    rotate,
                 )
                 if "texture" in element["faces"][i]:
-                    self.add_texture(element["faces"][i]["texture"].replace("#",""))
+                    self.add_texture(element["faces"][i]["texture"].replace("#", ""))
                 else:
                     self.add_texture(i)
             elif i == "down":
                 self.add_F(
                     [
-                        [pos1[0]+self.x,pos1[1]+self.y,pos1[2]+self.z],
-                        [pos2[0]+self.x,pos1[1]+self.y,pos1[2]+self.z],
-                        [pos2[0]+self.x,pos1[1]+self.y,pos2[2]+self.z],
-                        [pos1[0]+self.x,pos1[1]+self.y,pos2[2]+self.z]
+                        [pos1[0] + self.x, pos1[1] + self.y, pos1[2] + self.z],
+                        [pos2[0] + self.x, pos1[1] + self.y, pos1[2] + self.z],
+                        [pos2[0] + self.x, pos1[1] + self.y, pos2[2] + self.z],
+                        [pos1[0] + self.x, pos1[1] + self.y, pos2[2] + self.z],
                     ],
-                    rotate
+                    rotate,
                 )
                 if "texture" in element["faces"][i]:
-                    self.add_texture(element["faces"][i]["texture"].replace("#",""))
+                    self.add_texture(element["faces"][i]["texture"].replace("#", ""))
                 else:
                     self.add_texture(i)
             elif i == "north":
                 self.add_F(
                     [
-                        [pos2[0]+self.x,pos1[1]+self.y,pos1[2]+self.z],
-                        [pos1[0]+self.x,pos1[1]+self.y,pos1[2]+self.z],
-                        [pos1[0]+self.x,pos2[1]+self.y,pos1[2]+self.z],
-                        [pos2[0]+self.x,pos2[1]+self.y,pos1[2]+self.z],
+                        [pos2[0] + self.x, pos1[1] + self.y, pos1[2] + self.z],
+                        [pos1[0] + self.x, pos1[1] + self.y, pos1[2] + self.z],
+                        [pos1[0] + self.x, pos2[1] + self.y, pos1[2] + self.z],
+                        [pos2[0] + self.x, pos2[1] + self.y, pos1[2] + self.z],
                     ],
-                    rotate
+                    rotate,
                 )
                 if "texture" in element["faces"][i]:
-                    self.add_texture(element["faces"][i]["texture"].replace("#",""))
+                    self.add_texture(element["faces"][i]["texture"].replace("#", ""))
                 else:
                     self.add_texture(i)
             elif i == "south":
                 self.add_F(
                     [
-                        [pos1[0]+self.x,pos1[1]+self.y,pos2[2]+self.z],
-                        [pos2[0]+self.x,pos1[1]+self.y,pos2[2]+self.z],
-                        [pos2[0]+self.x,pos2[1]+self.y,pos2[2]+self.z],
-                        [pos1[0]+self.x,pos2[1]+self.y,pos2[2]+self.z]
+                        [pos1[0] + self.x, pos1[1] + self.y, pos2[2] + self.z],
+                        [pos2[0] + self.x, pos1[1] + self.y, pos2[2] + self.z],
+                        [pos2[0] + self.x, pos2[1] + self.y, pos2[2] + self.z],
+                        [pos1[0] + self.x, pos2[1] + self.y, pos2[2] + self.z],
                     ],
-                    rotate
+                    rotate,
                 )
                 if "texture" in element["faces"][i]:
-                    self.add_texture(element["faces"][i]["texture"].replace("#",""))
+                    self.add_texture(element["faces"][i]["texture"].replace("#", ""))
                 else:
                     self.add_texture(i)
             elif i == "west":
                 self.add_F(
                     [
-                        [pos1[0]+self.x,pos1[1]+self.y,pos1[2]+self.z],
-                        [pos1[0]+self.x,pos1[1]+self.y,pos2[2]+self.z],
-                        [pos1[0]+self.x,pos2[1]+self.y,pos2[2]+self.z],
-                        [pos1[0]+self.x,pos2[1]+self.y,pos1[2]+self.z]
+                        [pos1[0] + self.x, pos1[1] + self.y, pos1[2] + self.z],
+                        [pos1[0] + self.x, pos1[1] + self.y, pos2[2] + self.z],
+                        [pos1[0] + self.x, pos2[1] + self.y, pos2[2] + self.z],
+                        [pos1[0] + self.x, pos2[1] + self.y, pos1[2] + self.z],
                     ],
-                    rotate
+                    rotate,
                 )
                 if "texture" in element["faces"][i]:
-                    self.add_texture(element["faces"][i]["texture"].replace("#",""))
+                    self.add_texture(element["faces"][i]["texture"].replace("#", ""))
                 else:
                     self.add_texture(i)
             elif i == "east":
                 self.add_F(
                     [
-                        [pos2[0]+self.x,pos1[1]+self.y,pos2[2]+self.z],
-                        [pos2[0]+self.x,pos1[1]+self.y,pos1[2]+self.z],
-                        [pos2[0]+self.x,pos2[1]+self.y,pos1[2]+self.z],
-                        [pos2[0]+self.x,pos2[1]+self.y,pos2[2]+self.z],
+                        [pos2[0] + self.x, pos1[1] + self.y, pos2[2] + self.z],
+                        [pos2[0] + self.x, pos1[1] + self.y, pos1[2] + self.z],
+                        [pos2[0] + self.x, pos2[1] + self.y, pos1[2] + self.z],
+                        [pos2[0] + self.x, pos2[1] + self.y, pos2[2] + self.z],
                     ],
-                    rotate
+                    rotate,
                 )
                 if "texture" in element["faces"][i]:
-                    self.add_texture(element["faces"][i]["texture"].replace("#",""))
+                    self.add_texture(element["faces"][i]["texture"].replace("#", ""))
                 else:
                     self.add_texture(i)
-        self.objdata["vt"].append([0,0])
-        self.objdata["vt"].append([1,0])
-        self.objdata["vt"].append([1,1])
-        self.objdata["vt"].append([0,1])
+        self.objdata["vt"].append([0, 0])
+        self.objdata["vt"].append([1, 0])
+        self.objdata["vt"].append([1, 1])
+        self.objdata["vt"].append([0, 1])
 
         if self.rotatemode == "y":
             for i in range(len(self.objdata["v"])):
-                self.objdata["v"][i] = self.rotate_y(self.objdata["v"][i],self.rotate, self.center)
+                self.objdata["v"][i] = self.rotate_y(self.objdata["v"][i], self.rotate, self.center)
         elif self.rotatemode == "x":
             for i in range(len(self.objdata["v"])):
-                self.objdata["v"][i] = self.rotate_x(self.objdata["v"][i],self.rotate, self.center)
+                self.objdata["v"][i] = self.rotate_x(self.objdata["v"][i], self.rotate, self.center)
 
-    def rotate_y(self,point,angle,center):
+    def rotate_y(self, point, angle, center):
         angle = math.radians(angle)
         x = point[0] - center[0]
         z = point[2] - center[2]
@@ -279,16 +280,14 @@ class Enity:
         point[2] = x * math.sin(angle) + z * math.cos(angle) + center[2]
         return point
 
-    def rotate_x(self,point,angle,center):
+    def rotate_x(self, point, angle, center):
         angle = math.radians(angle)
         y = point[1] - center[1]
         z = point[2] - center[2]
-        point[1] = y * math.cos(angle) - z * math.sin(angle) + center[1]
-        point[2] = y * math.sin(angle) + z * math.cos(angle) + center[2]
+        point[1] = y * math.cos(angle) + z * math.sin(angle) + center[1]
+        point[2] = -y * math.sin(angle) + z * math.cos(angle) + center[2]
         return point
 
 
-
-
 if __name__ == "__main__":
-    Enity(0,0,0,{"Name":"minecraft:redstone_block"}).start()
+    Enity(0, 0, 0, {"Name": "minecraft:redstone_block"}).start()

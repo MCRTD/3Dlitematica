@@ -23,8 +23,7 @@ class bitstack:
         stepbytes = self.bites
         print(stepbytes)
         stepbytes = [
-            stepbytes[i : i + self.bytelong][::-1]
-            for i in range(0, len(self.bites), self.bytelong)
+            stepbytes[i : i + self.bytelong][::-1] for i in range(0, len(self.bites), self.bytelong)
         ]  # self.bytelong位一組
         stepbytes = stepbytes[::-1]
         stepbytes = [int(i, 2) for i in stepbytes]  # 二進位轉十進位
