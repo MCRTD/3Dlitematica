@@ -88,7 +88,14 @@ class objhandel:
                 [x + 0.1, y + 0.1, z + 0.1],
                 [x, y + 0.1, z + 0.1],
             ],
-            "vt": [[0, 0], [1, 0], [1, 1], [0, 1]],
+            "vt": [
+                [[0, 0], [1, 0], [1, 1], [0, 1]],
+                [[0, 0], [1, 0], [1, 1], [0, 1]],
+                [[0, 0], [1, 0], [1, 1], [0, 1]],
+                [[0, 0], [1, 0], [1, 1], [0, 1]],
+                [[0, 0], [1, 0], [1, 1], [0, 1]],
+                [[0, 0], [1, 0], [1, 1], [0, 1]],
+            ],
             "f": [
                 [1, 2, 3, 4],
                 [8, 7, 6, 5],
@@ -129,9 +136,11 @@ class objhandel:
                     oneblock += "v " + str(v[0]) + " " + str(v[1]) + " " + str(v[2]) + "\n"
                     self.vtof[(v[0], v[1], v[2])] = len(self.vtof) + 1
             for vt in self.tmpdata[blocks]["vt"]:
-                if self.vtovt.get((vt[0], vt[1])) == None:
-                    self.vtovt[(vt[0], vt[1])] = len(self.vtovt) + 1
-                    oneblock += "vt " + str(vt[0]) + " " + str(vt[1]) + "\n"
+                for i in vt:
+                    if self.vtovt.get((i[0], i[1])) == None:
+                        self.vtovt[(i[0], i[1])] = len(self.vtovt) + 1
+                        oneblock += "vt " + str(i[0]) + " " + str(i[1]) + "\n"
+
             ct1 = 0
             for f in self.tmpdata[blocks]["f"]:
                 if "textures" in self.tmpdata[blocks]:
@@ -160,8 +169,8 @@ class objhandel:
                         + str(
                             self.vtovt[
                                 (
-                                    self.tmpdata[blocks]["vt"][ct][0],
-                                    self.tmpdata[blocks]["vt"][ct][1],
+                                    self.tmpdata[blocks]["vt"][ct1][ct][0],
+                                    self.tmpdata[blocks]["vt"][ct1][ct][1],
                                 )
                             ]
                         )

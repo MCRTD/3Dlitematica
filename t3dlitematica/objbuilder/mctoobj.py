@@ -190,6 +190,7 @@ class Enity:
                     self.add_texture(element["faces"][i]["texture"].replace("#", ""))
                 else:
                     self.add_texture(i)
+                self.add_vt(element["faces"][i])
             elif i == "down":
                 self.add_F(
                     [
@@ -204,6 +205,7 @@ class Enity:
                     self.add_texture(element["faces"][i]["texture"].replace("#", ""))
                 else:
                     self.add_texture(i)
+                self.add_vt(element["faces"][i])
             elif i == "north":
                 self.add_F(
                     [
@@ -218,6 +220,7 @@ class Enity:
                     self.add_texture(element["faces"][i]["texture"].replace("#", ""))
                 else:
                     self.add_texture(i)
+                self.add_vt(element["faces"][i])
             elif i == "south":
                 self.add_F(
                     [
@@ -232,6 +235,7 @@ class Enity:
                     self.add_texture(element["faces"][i]["texture"].replace("#", ""))
                 else:
                     self.add_texture(i)
+                self.add_vt(element["faces"][i])
             elif i == "west":
                 self.add_F(
                     [
@@ -246,6 +250,7 @@ class Enity:
                     self.add_texture(element["faces"][i]["texture"].replace("#", ""))
                 else:
                     self.add_texture(i)
+                self.add_vt(element["faces"][i])
             elif i == "east":
                 self.add_F(
                     [
@@ -260,10 +265,7 @@ class Enity:
                     self.add_texture(element["faces"][i]["texture"].replace("#", ""))
                 else:
                     self.add_texture(i)
-        self.objdata["vt"].append([0, 0])
-        self.objdata["vt"].append([1, 0])
-        self.objdata["vt"].append([1, 1])
-        self.objdata["vt"].append([0, 1])
+                self.add_vt(element["faces"][i])
 
         if self.rotatemode == "y":
             for i in range(len(self.objdata["v"])):
@@ -271,6 +273,38 @@ class Enity:
         elif self.rotatemode == "x":
             for i in range(len(self.objdata["v"])):
                 self.objdata["v"][i] = self.rotate_x(self.objdata["v"][i], self.rotate, self.center)
+
+    def add_vt(self, face):
+        if "uv" in face:
+            self.objdata["vt"].append(
+                [
+                    [
+                        face["uv"][0] / 16 if face["uv"][0] != 0 else 0,
+                        face["uv"][1] / 16 if face["uv"][1] != 0 else 0,
+                    ],
+                    [
+                        face["uv"][2] / 16 if face["uv"][2] != 0 else 0,
+                        face["uv"][1] / 16 if face["uv"][1] != 0 else 0,
+                    ],
+                    [
+                        face["uv"][2] / 16 if face["uv"][2] != 0 else 0,
+                        face["uv"][3] / 16 if face["uv"][3] != 0 else 0,
+                    ],
+                    [
+                        face["uv"][0] / 16 if face["uv"][0] != 0 else 0,
+                        face["uv"][3] / 16 if face["uv"][3] != 0 else 0,
+                    ],
+                ]
+            )
+        else:
+            self.objdata["vt"].append(
+                [
+                    [0, 0],
+                    [1, 0],
+                    [1, 1],
+                    [0, 1],
+                ]
+            )
 
     def rotate_y(self, point, angle, center):
         angle = math.radians(angle)
