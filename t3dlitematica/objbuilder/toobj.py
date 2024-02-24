@@ -45,7 +45,6 @@ class objhandel:
                             print(f"[UserData] | {errMsg}")
                             self.addblock(i / 10, j / 10, k / 10, data[count]["Name"])
                             print(e)
-                    print(count)
                     count += 1
 
         # self.objfile.write(self.output)

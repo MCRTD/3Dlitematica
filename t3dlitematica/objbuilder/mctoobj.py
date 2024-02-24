@@ -57,7 +57,7 @@ class Enity:
         self.x = x
         self.y = y
         self.z = z
-        self.center = [x + 0.05, y + 0.05, z + 0.05]
+        self.center = [sum([x, x + 0.1]) / 2, sum([y, y + 0.1]) / 2, sum([z, z + 0.1]) / 2]
         self.parents = {}
         self.thisdata = None
         self.textures = {}
@@ -104,8 +104,14 @@ class Enity:
             ...
         for i in self.element:
             self.build_element(i)
+        if self.rotatemode == "y":
+            for i in range(len(self.objdata["v"])):
+                self.objdata["v"][i] = self.rotate_y(self.objdata["v"][i], self.rotate, self.center)
+        elif self.rotatemode == "x":
+            for i in range(len(self.objdata["v"])):
+                self.objdata["v"][i] = self.rotate_x(self.objdata["v"][i], self.rotate, self.center)
         print("-" * 50)
-        if self.objdata["blockname"] == "magenta_glazed_terracotta":
+        if self.objdata["blockname"] == "spruce_fence_gate":
             pprint(self.objdata)
             pprint(self.textures)
 
@@ -136,12 +142,10 @@ class Enity:
             return thelist.index(item) + 1
 
     def add_texture(self, texturename):
-        print(texturename)
         if texturename in self.textures:
             if "#" in self.textures[texturename]:
                 temp = self.textures[texturename]
                 temp = temp.replace("#", "")
-                print(temp)
                 self.add_texture(temp)
             else:
                 self.objdata["textures"].append(self.textures[texturename])
@@ -267,12 +271,23 @@ class Enity:
                     self.add_texture(i)
                 self.add_vt(element["faces"][i])
 
-        if self.rotatemode == "y":
-            for i in range(len(self.objdata["v"])):
-                self.objdata["v"][i] = self.rotate_y(self.objdata["v"][i], self.rotate, self.center)
-        elif self.rotatemode == "x":
-            for i in range(len(self.objdata["v"])):
-                self.objdata["v"][i] = self.rotate_x(self.objdata["v"][i], self.rotate, self.center)
+
+
+    def rotate_y(self, point, angle, center):
+        angle = math.radians(angle)
+        x = point[0] - center[0]
+        z = point[2] - center[2]
+        point[0] = x * math.cos(angle) - z * math.sin(angle) + center[0]
+        point[2] = x * math.sin(angle) + z * math.cos(angle) + center[2]
+        return point
+
+    def rotate_x(self, point, angle, center):
+        angle = math.radians(angle)
+        y = point[1] - center[1]
+        z = point[2] - center[2]
+        point[1] = y * math.cos(angle) + z * math.sin(angle) + center[1]
+        point[2] = -y * math.sin(angle) + z * math.cos(angle) + center[2]
+        return point
 
     def add_vt(self, face):
         if "uv" in face:
@@ -306,22 +321,7 @@ class Enity:
                 ]
             )
 
-    def rotate_y(self, point, angle, center):
-        angle = math.radians(angle)
-        x = point[0] - center[0]
-        z = point[2] - center[2]
-        point[0] = x * math.cos(angle) - z * math.sin(angle) + center[0]
-        point[2] = x * math.sin(angle) + z * math.cos(angle) + center[2]
-        return point
-
-    def rotate_x(self, point, angle, center):
-        angle = math.radians(angle)
-        y = point[1] - center[1]
-        z = point[2] - center[2]
-        point[1] = y * math.cos(angle) + z * math.sin(angle) + center[1]
-        point[2] = -y * math.sin(angle) + z * math.cos(angle) + center[2]
-        return point
-
 
 if __name__ == "__main__":
-    Enity(0, 0, 0, {"Name": "minecraft:redstone_block"}).start()
+    # Enity(0, 0, 0, {"Name": "minecraft:redstone_block"}).start()
+    print(Enity.rotate_y(...,[10, 0, 2], 180, [5, 5, 5]))
