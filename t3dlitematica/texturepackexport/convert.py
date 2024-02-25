@@ -47,11 +47,20 @@ class convert_texturepack:
                 blockstates = json.load(f)
             if "variants" in blockstates:
                 for variants in blockstates["variants"]:
-                    if (type(blockstates["variants"][variants]) == dict):
+                    if (type(blockstates["variants"][variants]) == dict):  # noqa: E721
                         load_model(blockstates["variants"][variants]["model"].split(":")[-1]+".json")
                         blockstates["variants"][variants]["model"] = blockstates["variants"][variants]["model"].split("/")[-1]
-                    elif (type(blockstates["variants"][variants]) == list):
+                    elif (type(blockstates["variants"][variants]) == list):  # noqa: E721
                         for j in blockstates["variants"][variants]:
+                            load_model(j["model"].split(":")[-1]+".json")
+                            j["model"] = j["model"].split("/")[-1]
+            if "multipart" in blockstates:
+                for multipart in blockstates["multipart"]:
+                    if type(multipart["apply"]) == dict:
+                        load_model(multipart["apply"]["model"].split(":")[-1]+".json")
+                        multipart["apply"]["model"] = multipart["apply"]["model"].split("/")[-1]
+                    elif type(multipart["apply"]) == list:
+                        for j in multipart["apply"]:
                             load_model(j["model"].split(":")[-1]+".json")
                             j["model"] = j["model"].split("/")[-1]
 
@@ -70,4 +79,4 @@ class convert_texturepack:
 
 
 if __name__ == "__main__":
-    convert_texturepack(r"C:\Users\phill\Downloads\VanillaDefault 1.20.4", r"C:\Users\phill\Documents\code\3Dlitematica\temp")
+    convert_texturepack(r"C:\Users\phill\OneDrive\桌面\codetool\VanillaDefault+1.20", r"C:\Users\phill\OneDrive\Documents\coed_thing\3Dlitematica\temp")

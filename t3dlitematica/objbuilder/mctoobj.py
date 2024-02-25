@@ -61,7 +61,7 @@ class Enity:
         self.parents = {}
         self.thisdata = None
         self.textures = {}
-        self.element = {}
+        self.element = []
         self.objdata = {"blockname": self.name, "v": [], "vt": [], "f": [], "textures": []}
         self.rotatemode = None
         self.rotate = 0
@@ -101,7 +101,18 @@ class Enity:
                 else:
                     self.load_model(self.thisdata["variants"][i]["model"])
         elif "multipart" in self.thisdata:
-            ...
+            for i in self.thisdata["multipart"]:
+                if "when" in i:
+                    if "OR" in i["when"]:
+                        for j in i["when"]["OR"]:
+                            if self.blockdata["Properties"][list(j.keys())[0]] == list(j.values())[0]:
+                                self.load_model(i["apply"]["model"].split("/")[-1])
+                                break
+                    else:
+                        if self.blockdata["Properties"][list(i["when"].keys())[0]] == list(i["when"].values())[0]:
+                            self.load_model(i["apply"]["model"].split("/")[-1])
+                else:
+                    self.load_model(i["apply"]["model"].split("/")[-1])
         for i in self.element:
             self.build_element(i)
         if self.rotatemode == "y":
@@ -111,11 +122,11 @@ class Enity:
             for i in range(len(self.objdata["v"])):
                 self.objdata["v"][i] = self.rotate_x(self.objdata["v"][i], self.rotate, self.center)
         print("-" * 50)
-        if self.objdata["blockname"] == "spruce_fence_gate":
+        if self.objdata["blockname"] == "brewing_stand":
             pprint(self.objdata)
             pprint(self.textures)
 
-    def load_model(self, modelname, isparent=False):
+    def load_model(self, modelname,isparent=False):
         with open(
             r"C:\Users\phill\OneDrive\Documents\coed_thing\3Dlitematica\temp\output.json",
             "r",
@@ -129,7 +140,7 @@ class Enity:
             if "textures" in model:
                 self.textures.update(model["textures"])
             if "elements" in model:
-                self.element = model["elements"]
+                self.element.extend(model["elements"])
 
     def append_pos(self, thelist, item):
         """
