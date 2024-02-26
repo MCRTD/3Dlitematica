@@ -61,8 +61,8 @@ class Enity:
         self.thisdata = None
         self.textures = {}
         self.enitys = []
-        self.rotatemode = None
-        self.rotate = 0
+        self.rotatemode = []
+        self.rotate = []
         self.element = None
         self.objdata = {"blockname": self.name, "v": [], "vt": [], "f": [], "textures": []}
         self.parse()
@@ -103,12 +103,12 @@ class Enity:
                                 flag = False
                                 break
                     if flag:
+                        if "x" in self.thisdata["variants"][i]:
+                            self.rotatemode.append("x")
+                            self.rotate.append(self.thisdata["variants"][i]["x"])
                         if "y" in self.thisdata["variants"][i]:
-                            self.rotatemode = "y"
-                            self.rotate = self.thisdata["variants"][i]["y"]
-                        elif "x" in self.thisdata["variants"][i]:
-                            self.rotatemode = "x"
-                            self.rotate = self.thisdata["variants"][i]["x"]
+                            self.rotatemode.append("y")
+                            self.rotate.append(self.thisdata["variants"][i]["y"])
                         self.load_model(self.thisdata["variants"][i]["model"])
                 else:
                     self.load_model(self.thisdata["variants"][i]["model"])
@@ -135,12 +135,12 @@ class Enity:
                             if flag2:
                                 flag = True
                         if flag:
+                            if "x" in i["apply"]:
+                                self.rotatemode.append("x")
+                                self.rotate.append(i["apply"]["x"])
                             if "y" in i["apply"]:
-                                self.rotatemode = "y"
-                                self.rotate = i["apply"]["y"]
-                            elif "x" in i["apply"]:
-                                self.rotatemode = "x"
-                                self.rotate = i["apply"]["x"]
+                                self.rotatemode.append("y")
+                                self.rotate.append(i["apply"]["y"])
                             self.load_model(i["apply"]["model"].split("/")[-1])
                     else:
                         if (
@@ -150,12 +150,12 @@ class Enity:
                             else self.blockdata["Properties"][list(i["when"].keys())[0]]
                             == list(i["when"].values())[0]
                         ):
+                            if "x" in i["apply"]:
+                                self.rotatemode.append("x")
+                                self.rotate.append(i["apply"]["x"])
                             if "y" in i["apply"]:
-                                self.rotatemode = "y"
-                                self.rotate = i["apply"]["y"]
-                            elif "x" in i["apply"]:
-                                self.rotatemode = "x"
-                                self.rotate = i["apply"]["x"]
+                                self.rotatemode.append("y")
+                                self.rotate.append(i["apply"]["y"])
                             self.load_model(i["apply"]["model"].split("/")[-1])
                 else:
                     self.load_model(i["apply"]["model"].split("/")[-1])
@@ -200,12 +200,20 @@ class Build_enity:
     def start(self):
         for i in self.element:
             self.build_element(i)
-        if self.rotatemode == "y":
-            for i in range(len(self.objdata["v"])):
-                self.objdata["v"][i] = self.rotate_y(self.objdata["v"][i], self.rotate, self.center)
-        elif self.rotatemode == "x":
-            for i in range(len(self.objdata["v"])):
-                self.objdata["v"][i] = self.rotate_x(self.objdata["v"][i], self.rotate, self.center)
+        alrrote = []
+        for i in range(len(self.rotatemode)):
+            if self.rotatemode[i] == "y" and self.rotatemode[i] not in alrrote:
+                alrrote.append(self.rotatemode[i])
+                for j in range(len(self.objdata["v"])):
+                    self.objdata["v"][j] = self.rotate_y(
+                        self.objdata["v"][j], self.rotate[i], self.center
+                    )
+            elif self.rotatemode[i] == "x" and self.rotatemode[i] not in alrrote:
+                alrrote.append(self.rotatemode[i])
+                for j in range(len(self.objdata["v"])):
+                    self.objdata["v"][j] = self.rotate_x(
+                        self.objdata["v"][j], self.rotate[i], self.center
+                    )
         print("-" * 50)
 
     def append_pos(self, thelist, item):
