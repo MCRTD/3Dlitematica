@@ -175,6 +175,7 @@ class Enity:
                 self.textures.update(model["textures"])
             if "elements" in model:
                 self.element = model["elements"]
+
         if not isparent:
             self.enitys.append(Build_enity(self, self.element))
 
@@ -236,7 +237,7 @@ class Build_enity:
                 self.objdata["textures"].append(self.textures[texturename])
                 return
 
-    def add_F(self, listV, rotate=0):
+    def add_F(self, listV, rotate=0, elerotate=None, center=[]):
         f = []
         if rotate == 90:
             listV = [listV[3], listV[0], listV[1], listV[2]]
@@ -244,6 +245,9 @@ class Build_enity:
             listV = [listV[2], listV[3], listV[0], listV[1]]
         elif rotate == 270:
             listV = [listV[1], listV[2], listV[3], listV[0]]
+        if elerotate != None:
+            for i in range(len(listV)):
+                listV[i] = elerotate(listV[i])
         for i in listV:
             f.append(self.append_pos(self.objdata["v"], i))
         self.objdata["f"].append(f)
@@ -255,9 +259,31 @@ class Build_enity:
         pos1 = element["from"]
         pos2 = element["to"]
 
+        elerotate = None
+
         for i in range(3):
             pos1[i] /= 16 * 10
             pos2[i] /= 16 * 10
+
+        if "rotation" in element:
+            center = []
+            if element["rotation"]["angle"] > 0:
+                element["rotation"]["angle"] = -element["rotation"]["angle"]
+            else:
+                element["rotation"]["angle"] = abs(element["rotation"]["angle"])
+            if "origin" in element["rotation"]:
+                center = [
+                    element["rotation"]["origin"][i] / (16 * 10) + [self.x, self.y, self.z][i]
+                    for i in range(3)
+                ]
+            if element["rotation"]["axis"] == "y":
+                elerotate = lambda x: self.rotate_y(
+                    x, element["rotation"]["angle"], center if center != [] else self.center
+                )
+            elif element["rotation"]["axis"] == "x":
+                elerotate = lambda x: self.rotate_x(
+                    x, element["rotation"]["angle"], center if center != [] else self.center
+                )
 
         # 六個面 = down up north south west east
         for i in element["faces"]:
@@ -274,6 +300,7 @@ class Build_enity:
                         [pos1[0] + self.x, pos2[1] + self.y, pos1[2] + self.z],
                     ],
                     rotate,
+                    elerotate,
                 )
                 if "texture" in element["faces"][i]:
                     self.add_texture(element["faces"][i]["texture"].replace("#", ""))
@@ -289,6 +316,7 @@ class Build_enity:
                         [pos1[0] + self.x, pos1[1] + self.y, pos2[2] + self.z],
                     ],
                     rotate,
+                    elerotate,
                 )
                 if "texture" in element["faces"][i]:
                     self.add_texture(element["faces"][i]["texture"].replace("#", ""))
@@ -304,6 +332,7 @@ class Build_enity:
                         [pos2[0] + self.x, pos2[1] + self.y, pos1[2] + self.z],
                     ],
                     rotate,
+                    elerotate,
                 )
                 if "texture" in element["faces"][i]:
                     self.add_texture(element["faces"][i]["texture"].replace("#", ""))
@@ -319,6 +348,7 @@ class Build_enity:
                         [pos1[0] + self.x, pos2[1] + self.y, pos2[2] + self.z],
                     ],
                     rotate,
+                    elerotate,
                 )
                 if "texture" in element["faces"][i]:
                     self.add_texture(element["faces"][i]["texture"].replace("#", ""))
@@ -334,6 +364,7 @@ class Build_enity:
                         [pos1[0] + self.x, pos2[1] + self.y, pos1[2] + self.z],
                     ],
                     rotate,
+                    elerotate,
                 )
                 if "texture" in element["faces"][i]:
                     self.add_texture(element["faces"][i]["texture"].replace("#", ""))
@@ -349,6 +380,7 @@ class Build_enity:
                         [pos2[0] + self.x, pos2[1] + self.y, pos2[2] + self.z],
                     ],
                     rotate,
+                    elerotate,
                 )
                 if "texture" in element["faces"][i]:
                     self.add_texture(element["faces"][i]["texture"].replace("#", ""))
