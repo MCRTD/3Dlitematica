@@ -116,22 +116,38 @@ class Enity:
             for i in self.thisdata["multipart"]:
                 if "when" in i:
                     if "OR" in i["when"]:
+                        flag = False
                         for j in i["when"]["OR"]:
-                            if (
-                                self.blockdata["Properties"][list(j.keys())[0]]
-                                == list(j.values())[0]
-                            ):
-                                if "y" in i["apply"]:
-                                    self.rotatemode = "y"
-                                    self.rotate = i["apply"]["y"]
-                                elif "x" in i["apply"]:
-                                    self.rotatemode = "x"
-                                    self.rotate = i["apply"]["x"]
-                                self.load_model(i["apply"]["model"].split("/")[-1])
-                                break
+                            flag2 = False
+                            for x in j.keys():
+                                if "|" in j[x]:
+                                    if self.blockdata["Properties"][x] in j[x].split("|"):
+                                        flag2 = True
+                                    else:
+                                        flag2 = False
+                                        break
+                                else:
+                                    if self.blockdata["Properties"][x] == j[x]:
+                                        flag2 = True
+                                    else:
+                                        flag2 = False
+                                        break
+                            if flag2:
+                                flag = True
+                        if flag:
+                            if "y" in i["apply"]:
+                                self.rotatemode = "y"
+                                self.rotate = i["apply"]["y"]
+                            elif "x" in i["apply"]:
+                                self.rotatemode = "x"
+                                self.rotate = i["apply"]["x"]
+                            self.load_model(i["apply"]["model"].split("/")[-1])
                     else:
                         if (
                             self.blockdata["Properties"][list(i["when"].keys())[0]]
+                            in list(i["when"].values())[0].split("|")
+                            if "|" in list(i["when"].values())[0]
+                            else self.blockdata["Properties"][list(i["when"].keys())[0]]
                             == list(i["when"].values())[0]
                         ):
                             if "y" in i["apply"]:
