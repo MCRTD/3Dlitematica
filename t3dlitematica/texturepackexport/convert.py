@@ -40,6 +40,11 @@ class convert_texturepack:
             if "parent" in blockmodel and blockmodel["parent"]  not in self.blocksdata["models"]:
                 load_model(tempload["parent"].split(":")[-1]+".json")
             if path not in self.blocksdata["models"]:
+                if path.split("/")[-1].split(".")[0] == "sculk_sensor":
+                    blockmodel["elements"][0]["faces"]["north"]["uv"] = [0, 0, 16, 8]
+                    blockmodel["elements"][0]["faces"]["east"]["uv"] = [0, 0, 16, 8]
+                    blockmodel["elements"][0]["faces"]["south"]["uv"] = [0, 0, 16, 8]
+                    blockmodel["elements"][0]["faces"]["west"]["uv"] = [0, 0, 16, 8]
                 self.blocksdata["models"][path.split("/")[-1].split(".")[0]] = blockmodel
 
         for i in os.listdir(os.path.join(self.mainpath, "blockstates")):
