@@ -205,8 +205,6 @@ class Build_enity:
         for i in self.element:
             self.build_element(i)
         alrrote = []
-        print(self.rotatemode)
-        print(self.rotate)
 
         for i in range(len(self.rotatemode)):
             if isinstance(self.rotatemode[i],dict):
@@ -281,9 +279,7 @@ class Build_enity:
 
         elerotate = None
 
-        for i in range(3):
-            pos1[i] /= 16 * 10
-            pos2[i] /= 16 * 10
+
 
         if "rotation" in element:
             center = []
@@ -304,6 +300,15 @@ class Build_enity:
                 elerotate = lambda x: self.rotate_x(
                     x, element["rotation"]["angle"], center if center != [] else self.center
                 )
+            if "rescale" in element["rotation"] and element["rotation"]["rescale"] and "rail" in self.textures:
+                pos1 = [0,9,-3]
+                pos2 = [16,9,19]
+
+        for i in range(3):
+            pos1[i] /= 16 * 10
+            pos2[i] /= 16 * 10
+
+
 
         # 六個面 = down up north south west east
         for i in element["faces"]:
