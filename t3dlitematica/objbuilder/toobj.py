@@ -7,7 +7,7 @@ import os
 
 
 class objhandel:
-    def __init__(self, name, data, size) -> None:
+    def __init__(self, name, data, size,show_error_block=False) -> None:
         self.name = name
         self.objfile = open(name + ".obj", "w")
         self.output = "# generate by 3dlitematica" + "\n" + "g " + name + "\n"
@@ -15,6 +15,7 @@ class objhandel:
         self.vtof = {}  # 對應表
         self.vtovt = {}
         self.textures = []
+        self.show_error_block = show_error_block
         self.main(data, size)
 
     def main(self, data, size):
@@ -43,7 +44,10 @@ class objhandel:
                                 fileName, lineNum, funcName, error_class, detail
                             )
                             print(f"[UserData] | {errMsg}")
-                            self.addblock(i / 10, j / 10, k / 10, data[count]["Name"])
+                            if self.show_error_block:
+                                self.addblock(i / 10, j / 10, k / 10, data[count]["Name"])
+                            else:
+                                pass
                             print(e)
                     count += 1
 
@@ -188,10 +192,15 @@ class objhandel:
 if __name__ == "__main__":
     with open("./test.json", "r", encoding="utf8") as f:
         data = json.load(f)
+    # size = (
+    #     int(data["Regions"]["Unnamed"]["Size"]["x"]),
+    #     int(data["Regions"]["Unnamed"]["Size"]["y"]),
+    #     int(data["Regions"]["Unnamed"]["Size"]["z"]),
+    # )
     size = (
-        int(data["Regions"]["Unnamed"]["Size"]["x"]),
-        int(data["Regions"]["Unnamed"]["Size"]["y"]),
-        int(data["Regions"]["Unnamed"]["Size"]["z"]),
+        int(data["Metadata"]["EnclosingSize"]["x"]),
+        int(data["Metadata"]["EnclosingSize"]["y"]),
+        int(data["Metadata"]["EnclosingSize"]["z"]),
     )
     data = data["Regions"]["Unnamed"]["decode_BlockStates"]
     objhandel("test", data, size)
