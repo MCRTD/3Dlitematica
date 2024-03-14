@@ -1,6 +1,5 @@
 import gzip
 import io
-import zipfile
 
 
 def BigEndiannessForInt(source, index):
@@ -27,7 +26,3 @@ def SmallEndiannessForInt(source, index):
 
 def GZipUnzip(source):
     return gzip.GzipFile(fileobj=io.BytesIO(source)).read()
-
-
-def ZipUnzip(source):
-    return zipfile.ZipFile(io.BytesIO(source)).read()

@@ -1,7 +1,7 @@
 from . import NBTHandler
 from . import Utilities
 from . import bitstack
-
+import math
 
 def Resolve(fPath):
     litematic = open(fPath, "rb")
@@ -17,7 +17,7 @@ def to_human(Resolve_data):
     for i in Resolve_data["Regions"]:
         for y in Resolve_data["Regions"][i]["Size"]:
             Resolve_data["Regions"][i]["Size"][y] = str(
-                int(int(Resolve_data["Regions"][i]["Size"][y]) / 16777216)
+                math.floor(float(Resolve_data["Regions"][i]["Size"][y]) / 16777216)
             )
 
         for y in Resolve_data["Regions"][i]["Position"]:
@@ -25,9 +25,6 @@ def to_human(Resolve_data):
                 int(int(Resolve_data["Regions"][i]["Position"][y]) / 16777216)
             )
         for y, z in enumerate(Resolve_data["Regions"][i]["TileEntities"]):
-            # for z in Resolve_data["Regions"][i]["TileEntities"][y]:
-            #     if z == "x" or z == "y" or z == "z":
-            #         Resolve_data["Regions"][i]["TileEntities"][y][z] = str(int(Resolve_data["Regions"][i]["TileEntities"][y][z])/16777216)
             for hh in Resolve_data["Regions"][i]["TileEntities"][y]:
                 if hh == "x" or hh == "y" or hh == "z":
                     Resolve_data["Regions"][i]["TileEntities"][y][hh] = str(
