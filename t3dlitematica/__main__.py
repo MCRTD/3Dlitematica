@@ -75,12 +75,15 @@ def Obj(json_or_litematica, texturefolder, output):
 
 @cli.command()
 @click.argument("texturepack", type=click.Path(exists=True))
-@click.option("-o", "--output", "output", default="./", help="Output file path")
+@click.option("-o", "--output", "output", default="./temp", help="Output file path")
 def Texture(texturepack, output):
     """
     Convert texture pack for 3d litematica
     """
-    click.echo("Wait")
+    texturepack = Path(texturepack).absolute()
+    output = Path(output).absolute()
+    with alive_bar(bar="bubbles", spinner="wait"):
+        convert_texturepack(texturepack, output)
 
 
 if __name__ == "__main__":

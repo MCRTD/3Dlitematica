@@ -8,6 +8,7 @@ class convert_texturepack:
         self.path = path
         self.mainpath = os.path.join(path, "assets", "minecraft")
         self.output = output
+        os.makedirs(self.output, exist_ok=True)
         self.noneedfind = ["armor_trims","mob_effects","shield_patterns","particles"]
         self.blocksdata = {"models":{}}
         self.start()
