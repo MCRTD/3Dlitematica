@@ -1,1 +1,1 @@
-from convert import convert_texturepack
+from texturepackexport.convert import convert_texturepack

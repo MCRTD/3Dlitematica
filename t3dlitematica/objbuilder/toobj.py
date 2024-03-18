@@ -1,7 +1,7 @@
 import json
 import sys
 import traceback
-from mctoobj import Enity
+from objbuilder.mctoobj import Enity
 import os
 
 

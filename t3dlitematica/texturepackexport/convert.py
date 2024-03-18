@@ -71,7 +71,7 @@ class convert_texturepack:
 
             self.blocksdata[i.split(".")[0]] = blockstates
 
-        with open(self.output+"\output.json", "w", encoding="utf8") as f:
+        with open(self.output+r"\output.json", "w", encoding="utf8") as f:
             json.dump(self.blocksdata, f, indent=4, ensure_ascii=False)
 
         if os.path.exists(os.path.join(self.output,"textures")):

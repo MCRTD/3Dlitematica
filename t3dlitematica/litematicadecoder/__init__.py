@@ -1,1 +1,1 @@
-from t3dlitematica.litematicadecoder.LitematicaHandler import Resolve as Resolve
+from litematicadecoder.LitematicaHandler import Resolve as Resolve
