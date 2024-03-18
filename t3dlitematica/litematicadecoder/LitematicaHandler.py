@@ -60,7 +60,6 @@ def decode_BlockStates(Resolve_data):
         )
         for y in Resolve_data["Regions"][i]["BlockStates"]:
             bitlist.add(y)
-        print(bitlist.calc())
         Resolve_data["Regions"][i]["decode_BlockStates"] = bitlist.calc()
         print("decode success")
     return Resolve_data

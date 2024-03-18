@@ -1,6 +1,5 @@
 import json
 import math
-from pprint import pprint
 # example:
 #         "cube": {
 #             "parent": "block",
@@ -233,7 +232,6 @@ class Build_enity:
                         self.objdata["v"][j] = self.rotate_x(
                             self.objdata["v"][j], self.rotate[i], self.center
                         )
-        print("-" * 50)
 
     def append_pos(self, thelist, item):
         """

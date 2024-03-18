@@ -2,7 +2,6 @@ import json
 import sys
 import traceback
 from mctoobj import Enity
-from pprint import pprint
 import os
 
 
@@ -48,13 +47,11 @@ class objhandel:
                                 self.addblock(i / 10, j / 10, k / 10, data[count]["Name"])
                             else:
                                 pass
-                            print(e)
                     count += 1
 
         # self.objfile.write(self.output)
         self.writeobj()
         self.objfile.close()
-        print(self.tmpdata)
 
     """
     # List of geometric vertices, with (x, y, z, [w]) coordinates, w is optional and defaults to 1.0.
@@ -183,7 +180,6 @@ class objhandel:
                 oneblock += "\n"
                 ct1 += 1
             oneblock += "#DEBUG \n"
-        # pprint(self.vtof)
         self.output += "mtllib " + self.name + ".mtl" + "\n"
         self.output += oneblock
         self.objfile.write(self.output)
@@ -192,11 +188,6 @@ class objhandel:
 if __name__ == "__main__":
     with open("./test.json", "r", encoding="utf8") as f:
         data = json.load(f)
-    # size = (
-    #     int(data["Regions"]["Unnamed"]["Size"]["x"]),
-    #     int(data["Regions"]["Unnamed"]["Size"]["y"]),
-    #     int(data["Regions"]["Unnamed"]["Size"]["z"]),
-    # )
     size = (
         int(data["Metadata"]["EnclosingSize"]["x"]),
         int(data["Metadata"]["EnclosingSize"]["y"]),

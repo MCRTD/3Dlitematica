@@ -21,7 +21,6 @@ class bitstack:
 
     def calc(self):
         stepbytes = self.bites
-        print(stepbytes)
         stepbytes = [
             stepbytes[i : i + self.bytelong][::-1] for i in range(0, len(self.bites), self.bytelong)
         ]  # self.bytelong位一組
