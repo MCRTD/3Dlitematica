@@ -1,5 +1,6 @@
 import json
 import math
+from typing import Callable, List, Union
 # example:
 #         "cube": {
 #             "parent": "block",
@@ -50,7 +51,7 @@ import math
 
 
 class Enity:
-    def __init__(self, x, y, z, blockdata):
+    def __init__(self, x:float, y:float, z:float, blockdata:dict) -> None:
         self.blockdata = blockdata
         self.name = blockdata["Name"].replace("minecraft:", "")
         self.x = x
@@ -67,7 +68,7 @@ class Enity:
         self.parse()
         self.merge()
 
-    def merge(self):
+    def merge(self) -> None:
         # f要替換為全部v轉換的index
         for i in self.enitys:
             self.objdata["v"].extend(i.objdata["v"])
@@ -81,7 +82,7 @@ class Enity:
             self.objdata["vt"].extend(i.objdata["vt"])
             self.objdata["textures"].extend(i.objdata["textures"])
 
-    def parse(self):
+    def parse(self) -> None:
         with open(
             r"C:\Users\phill\OneDrive\Documents\coed_thing\3Dlitematica\temp\output.json",
             "r",
@@ -161,7 +162,7 @@ class Enity:
                     self.load_model(i["apply"]["model"].split("/")[-1], code)
                 code += 1
 
-    def load_model(self, modelname, code=None,isparent=False):
+    def load_model(self, modelname:str, code=None,isparent=False) -> None:
         with open(
             r"C:\Users\phill\OneDrive\Documents\coed_thing\3Dlitematica\temp\output.json",
             "r",
@@ -182,7 +183,7 @@ class Enity:
 
 
 class Build_enity:
-    def __init__(self, mother: Enity, code,elements):
+    def __init__(self, mother: Enity, code:str,elements:List[dict]) -> None:
         self.name = code
         self.x = mother.x
         self.y = mother.y
@@ -253,7 +254,7 @@ class Build_enity:
                 self.objdata["textures"].append(self.textures[texturename])
                 return
 
-    def add_F(self, listV, rotate=0, elerotate=None, center=[]):
+    def add_F(self, listV:List[float], rotate:int=0, elerotate:Callable[[List[float]],List[float]]=None) -> None:
         f = []
         if rotate == 90:
             listV = [listV[3], listV[0], listV[1], listV[2]]
@@ -268,7 +269,7 @@ class Build_enity:
             f.append(self.append_pos(self.objdata["v"], i))
         self.objdata["f"].append(f)
 
-    def build_element(self, element):
+    def build_element(self, element:dict) -> None:
         # 一個方塊 = 1*1*1
         # 數據給的方塊 = 16*16*16
         # 轉換為 1*1*1
@@ -291,11 +292,11 @@ class Build_enity:
                     for i in range(3)
                 ]
             if element["rotation"]["axis"] == "y":
-                elerotate = lambda x: self.rotate_y(
+                elerotate = lambda x: self.rotate_y(  # noqa: E731
                     x, element["rotation"]["angle"], center if center != [] else self.center
                 )
             elif element["rotation"]["axis"] == "x":
-                elerotate = lambda x: self.rotate_x(
+                elerotate = lambda x: self.rotate_x(  # noqa: E731
                     x, element["rotation"]["angle"], center if center != [] else self.center
                 )
             if "rescale" in element["rotation"] and element["rotation"]["rescale"] and "rail" in self.textures:
@@ -411,7 +412,7 @@ class Build_enity:
                     self.add_texture(i)
                 self.add_vt(element["faces"][i])
 
-    def rotate_y(self, point, angle, center):
+    def rotate_y(self, point:List[float], angle:Union[int,float], center:List[float]):
         angle = math.radians(angle)
         x = point[0] - center[0]
         z = point[2] - center[2]
@@ -419,7 +420,7 @@ class Build_enity:
         point[2] = x * math.sin(angle) + z * math.cos(angle) + center[2]
         return point
 
-    def rotate_x(self, point, angle, center):
+    def rotate_x(self, point:List[float], angle:Union[int,float], center:List[float]):
         angle = math.radians(angle)
         y = point[1] - center[1]
         z = point[2] - center[2]
@@ -427,7 +428,7 @@ class Build_enity:
         point[2] = -y * math.sin(angle) + z * math.cos(angle) + center[2]
         return point
 
-    def add_vt(self, face):
+    def add_vt(self, face:dict) -> None:
         if "uv" in face:
             self.objdata["vt"].append(
                 [

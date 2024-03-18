@@ -1,5 +1,6 @@
+from typing import List, Any
 class bitstack:
-    def __init__(self, bytelong, Resolve_data) -> None:
+    def __init__(self, bytelong:int, Resolve_data: List[Any]) -> None:
         self.bites = ""
         long = 1
         while bytelong > 2**long:
@@ -7,19 +8,19 @@ class bitstack:
         self.bytelong = long
         self.Resolve_data = Resolve_data
 
-    def add(self, bite):
+    def add(self, bite: int) -> None:
         bite = int(bite)
         bite = bin(bite & 0xFFFFFFFFFFFFFFFF)[2:].zfill(64)
         bite = [j for j in [bite[i : i + 8] for i in range(0, len(bite), 8)][::-1]]
         bite = "".join(bite)
         self.bites += bite[::-1]
 
-    def get(self, length):
+    def get(self, length: int) -> str:
         bite = self.bites[:length]
         self.bites = self.bites[length:]
         return bite
 
-    def calc(self):
+    def calc(self) -> List[Any]:
         stepbytes = self.bites
         stepbytes = [
             stepbytes[i : i + self.bytelong][::-1] for i in range(0, len(self.bites), self.bytelong)

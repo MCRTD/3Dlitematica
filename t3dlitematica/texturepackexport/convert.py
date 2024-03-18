@@ -13,7 +13,7 @@ class convert_texturepack:
         self.start()
 
 
-    def start(self):
+    def start(self) -> None:
         sources = []
         for i in os.listdir(os.path.join(self.mainpath, "atlases")):
             if i.split(".")[0] in self.noneedfind:
@@ -31,14 +31,15 @@ class convert_texturepack:
             elif i['type'] == "single":
                 needcopy.add(i["resource"].split("/")[0])
 
-        def load_model(path):
+        def load_model(path:str) -> None:
             with open(os.path.join(self.mainpath, "models", path), "r", encoding="utf8") as f:
                 blockmodel = f.read()
                 tempload = json.loads(blockmodel)
             blockmodel = blockmodel.replace("minecraft:", "")
-            blockmodel = json.loads(blockmodel)
+            blockmodel:dict = json.loads(blockmodel)
             if "parent" in blockmodel and blockmodel["parent"]  not in self.blocksdata["models"]:
                 load_model(tempload["parent"].split(":")[-1]+".json")
+            # 強制複寫無法解決問題的UV
             if path not in self.blocksdata["models"]:
                 if path.split("/")[-1].split(".")[0] == "sculk_sensor":
                     blockmodel["elements"][0]["faces"]["north"]["uv"] = [0, 0, 16, 8]
@@ -52,19 +53,19 @@ class convert_texturepack:
                 blockstates = json.load(f)
             if "variants" in blockstates:
                 for variants in blockstates["variants"]:
-                    if (type(blockstates["variants"][variants]) == dict):  # noqa: E721
+                    if isinstance(blockstates["variants"][variants] , dict):
                         load_model(blockstates["variants"][variants]["model"].split(":")[-1]+".json")
                         blockstates["variants"][variants]["model"] = blockstates["variants"][variants]["model"].split("/")[-1]
-                    elif (type(blockstates["variants"][variants]) == list):  # noqa: E721
+                    elif isinstance(blockstates["variants"][variants] , list):
                         for j in blockstates["variants"][variants]:
                             load_model(j["model"].split(":")[-1]+".json")
                             j["model"] = j["model"].split("/")[-1]
             if "multipart" in blockstates:
                 for multipart in blockstates["multipart"]:
-                    if type(multipart["apply"]) == dict:
+                    if isinstance(multipart["apply"], dict):
                         load_model(multipart["apply"]["model"].split(":")[-1]+".json")
                         multipart["apply"]["model"] = multipart["apply"]["model"].split("/")[-1]
-                    elif type(multipart["apply"]) == list:
+                    elif isinstance(multipart["apply"], list):
                         for j in multipart["apply"]:
                             load_model(j["model"].split(":")[-1]+".json")
                             j["model"] = j["model"].split("/")[-1]

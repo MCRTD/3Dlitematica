@@ -2,7 +2,7 @@ import gzip
 import io
 
 
-def BigEndiannessForInt(source, index):
+def BigEndiannessForInt(source: bytes, index: int) -> int:
     return (
         (source[index] << 24)
         + (source[index + 1] << 16)
@@ -11,11 +11,11 @@ def BigEndiannessForInt(source, index):
     )
 
 
-def BigEndiannessForLong(source, index):
+def BigEndiannessForLong(source: bytes, index: int) -> int:
     return (BigEndiannessForInt(source, index) << 32) + BigEndiannessForInt(source, index + 4)
 
 
-def SmallEndiannessForInt(source, index):
+def SmallEndiannessForInt(source: bytes, index: int) -> int:
     return (
         source[index]
         + (source[index + 1] << 8)
@@ -24,5 +24,5 @@ def SmallEndiannessForInt(source, index):
     )
 
 
-def GZipUnzip(source):
+def GZipUnzip(source:bytes) -> bytes:
     return gzip.GzipFile(fileobj=io.BytesIO(source)).read()

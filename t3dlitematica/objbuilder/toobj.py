@@ -3,10 +3,11 @@ import sys
 import traceback
 from objbuilder.mctoobj import Enity
 import os
+from typing import List
 
 
 class objhandel:
-    def __init__(self, name, data, size,show_error_block=False) -> None:
+    def __init__(self, name:str, data:List[dict], size:tuple[int,int,int],show_error_block:bool=False) -> None:
         self.name = name
         self.objfile = open(name + ".obj", "w")
         self.output = "# generate by 3dlitematica" + "\n" + "g " + name + "\n"
@@ -70,12 +71,12 @@ class objhandel:
     f ...
     """
 
-    def addEnity(self, Enity: Enity):
+    def addEnity(self, Enity: Enity) -> None:
         if Enity.objdata["v"] == []:
             raise Exception('Enity.objdata["v"] is empty')
         self.tmpdata[(Enity.x, Enity.y, Enity.z)] = Enity.objdata
 
-    def addblock(self, x, y, z, blockname):
+    def addblock(self, x:float, y:float, z:float, blockname:str) -> None:
         self.tmpdata[(x, y, z)] = {
             "blockname": blockname,
             "v": [
@@ -106,7 +107,7 @@ class objhandel:
             ],
         }
 
-    def writeobj(self):
+    def writeobj(self) -> None:
         # TODO: 將方塊加入到group裡面
         # https://blog.csdn.net/xyh930929/article/details/82260581
         # 格式 ：f v/vt/vn v/vt/vn v/vt/vn（f 顶点索引 / 纹理坐标索引 / 顶点法向量索引）

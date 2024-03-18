@@ -3,13 +3,13 @@ from . import Utilities
 from . import bitstack
 import math
 
-def Resolve(fPath):
+def Resolve(fPath:str):
     litematic = open(fPath, "rb")
     binSource = Utilities.GZipUnzip(litematic.read())
     return decode_BlockStates(to_human(NBTHandler.Resolve(binSource)))
 
 
-def to_human(Resolve_data):
+def to_human(Resolve_data:dict) -> dict:
     for i in Resolve_data["Metadata"]["EnclosingSize"]:
         Resolve_data["Metadata"]["EnclosingSize"][i] = str(
             int(int(Resolve_data["Metadata"]["EnclosingSize"][i]) / 16777216)
@@ -34,7 +34,7 @@ def to_human(Resolve_data):
     return Resolve_data
 
 
-def decode_BlockStates(Resolve_data):
+def decode_BlockStates(Resolve_data:dict) -> dict:
     #   "BlockStates":[
     #      "360323773641625836",
     #      "977288815838265344"

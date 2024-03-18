@@ -1,19 +1,20 @@
 import struct
 from . import Utilities
 import copy
+from typing import Union
 
 
-def Resolve(binSource:bytes , indentationWhiteSpace = 2):
+def Resolve(binSource:bytes , indentationWhiteSpace:int = 2) -> dict:
     jsonLines , _ = ReadCompoundTag(binSource , indentationWhiteSpace)
     return jsonLines
 
-def ReadCompoundTag(binSource:bytes , indentationWhiteSpace = 2 , pointer = 0 , defaultIndentation = 0 , readName = False):
+def ReadCompoundTag(binSource:bytes , indentationWhiteSpace:int = 2 , pointer:int = 0 , defaultIndentation:int = 0 , readName:bool = False) -> tuple[Union[dict , str] , int]:
     indentation = defaultIndentation
     name = ""
     if readName:
         name , pointer = ReadTagName(binSource , pointer)
         litematicdata = {}
-        returnlitematicdata={"name": name, "value": ""}
+        returnlitematicdata = {"name": name, "value": ""}
     else:
         pointer += 3
         litematicdata = {}
