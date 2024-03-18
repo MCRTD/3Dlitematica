@@ -1,1 +1,1 @@
-from objbuilder.toobj import objhandel
+from objbuilder.toobj import LitimaticaToObj

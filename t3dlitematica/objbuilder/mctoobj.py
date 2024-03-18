@@ -1,5 +1,6 @@
 import json
 import math
+import os
 from typing import Callable, List, Union
 # example:
 #         "cube": {
@@ -51,7 +52,7 @@ from typing import Callable, List, Union
 
 
 class Enity:
-    def __init__(self, x:float, y:float, z:float, blockdata:dict) -> None:
+    def __init__(self, x:float, y:float, z:float, blockdata:dict,texturepath:str) -> None:
         self.blockdata = blockdata
         self.name = blockdata["Name"].replace("minecraft:", "")
         self.x = x
@@ -65,6 +66,7 @@ class Enity:
         self.rotate = []
         self.element = None
         self.objdata = {"blockname": self.name, "v": [], "vt": [], "f": [], "textures": []}
+        self.texturepath = os.path.join(texturepath, "output.json")
         self.parse()
         self.merge()
 
@@ -84,7 +86,7 @@ class Enity:
 
     def parse(self) -> None:
         with open(
-            r"C:\Users\phill\OneDrive\Documents\coed_thing\3Dlitematica\temp\output.json",
+            self.texturepath,
             "r",
             encoding="utf8",
         ) as f:
@@ -164,7 +166,7 @@ class Enity:
 
     def load_model(self, modelname:str, code=None,isparent=False) -> None:
         with open(
-            r"C:\Users\phill\OneDrive\Documents\coed_thing\3Dlitematica\temp\output.json",
+            self.texturepath,
             "r",
             encoding="utf8",
         ) as f:

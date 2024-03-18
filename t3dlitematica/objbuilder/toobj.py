@@ -4,19 +4,36 @@ import traceback
 from objbuilder.mctoobj import Enity
 import os
 from typing import List
+import tempfile
+import shutil
+from pathlib import Path
 
+def LitimaticaToObj(litematica: dict, TextureFolder: str, output: str = "./") -> None:
+    size = (
+        int(litematica["Metadata"]["EnclosingSize"]["x"]),
+        int(litematica["Metadata"]["EnclosingSize"]["y"]),
+        int(litematica["Metadata"]["EnclosingSize"]["z"]),
+    )
+    regonname = list(litematica["Regions"].keys())[0]
+    litematica = litematica["Regions"][regonname]["decode_BlockStates"]
+    Objhandel("test", litematica, size, TextureFolder, output)
 
-class objhandel:
-    def __init__(self, name:str, data:List[dict], size:tuple[int,int,int],show_error_block:bool=False) -> None:
+class Objhandel:
+    def __init__(self, name:str, data:List[dict], size:tuple[int,int,int],TextureFolder:str,outputfolder:str,show_error_block:bool=False) -> None:
         self.name = name
-        self.objfile = open(name + ".obj", "w")
+        self.tempfolder = tempfile.mkdtemp()
+        self.objfile = open(os.path.join(self.tempfolder, self.name + ".obj"), "w")
         self.output = "# generate by 3dlitematica" + "\n" + "g " + name + "\n"
         self.tmpdata = {}
         self.vtof = {}  # 對應表
         self.vtovt = {}
         self.textures = []
         self.show_error_block = show_error_block
+        self.TextureFolder = TextureFolder
+        self.outputfolder = outputfolder
         self.main(data, size)
+        shutil.make_archive(os.path.join(self.outputfolder, self.name), "zip", self.tempfolder)
+        shutil.rmtree(self.tempfolder)
 
     def main(self, data, size):
         data = list(reversed(data))
@@ -31,7 +48,7 @@ class objhandel:
                         pass
                     else:
                         try:
-                            self.addEnity(Enity(i / 10, j / 10, k / 10, data[count]))
+                            self.addEnity(Enity(i / 10, j / 10, k / 10, data[count], self.TextureFolder))
                         except Exception as e:
                             error_class = e.__class__.__name__
                             detail = e.args[0]
@@ -112,22 +129,32 @@ class objhandel:
         # https://blog.csdn.net/xyh930929/article/details/82260581
         # 格式 ：f v/vt/vn v/vt/vn v/vt/vn（f 顶点索引 / 纹理坐标索引 / 顶点法向量索引）
         temp = ""
+        if not os.path.exists(os.path.join(self.tempfolder, "textures")):
+            os.makedirs(os.path.join(self.tempfolder, "textures"))
         for i in self.tmpdata:
             if "textures" in self.tmpdata[i]:
                 for j in set(self.tmpdata[i]["textures"]):
                     if j not in self.textures:
                         self.textures.append(j)
+                        shutil.copy(
+                            os.path.join(self.TextureFolder,"textures", j + ".png"),
+                            os.path.join(self.tempfolder, "textures"),
+                        )
                         temp += "newmtl " + j.split("/")[-1] + "\n"
                         temp += "Ka 1.000 1.000 1.000\n"
-                        temp += "map_Kd " + os.path.join("temp", "textures", j + ".png") + "\n"
+                        temp += "map_Kd " + os.path.join("textures", j.split("/")[-1] + ".png") + "\n"
                         temp += "\n"
         temp += "newmtl " + "missing" + "\n"
         temp += "Ka 1.000 1.000 1.000\n"
         temp += (
-            "map_Kd " + os.path.join("resource", "Minecraft_missing_texture_block.svg.png") + "\n"
+            "map_Kd " + os.path.join("textures", "Minecraft_missing_texture_block.svg.png") + "\n"
         )
         temp += "\n"
-        with open(self.name + ".mtl", "w") as f:
+        shutil.copy(
+            os.path.join(Path(__file__).parent.parent.parent, "resource","Minecraft_missing_texture_block.svg.png"),
+            os.path.join(self.tempfolder, "textures", "Minecraft_missing_texture_block.svg.png"),
+        )
+        with open(os.path.join(self.tempfolder, self.name + ".mtl"), "w") as f:
             f.write(temp)
 
         oneblock = ""
@@ -195,4 +222,5 @@ if __name__ == "__main__":
         int(data["Metadata"]["EnclosingSize"]["z"]),
     )
     data = data["Regions"]["Unnamed"]["decode_BlockStates"]
-    objhandel("test", data, size)
+    Objhandel("test", data, size)
+
