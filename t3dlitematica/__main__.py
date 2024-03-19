@@ -3,9 +3,9 @@ from pathlib import Path
 import click
 import json
 from alive_progress import alive_bar
-from litematicadecoder import Resolve
-from objbuilder import LitimaticaToObj
-from texturepackexport import convert_texturepack
+from .litematicadecoder import Resolve
+from .objbuilder import LitimaticaToObj
+from .texturepackexport import convert_texturepack
 
 
 class Litematica(click.ParamType):
@@ -48,7 +48,7 @@ def Decode(litematica, output, filename):
     path = Path(output).absolute()
     with alive_bar(bar="bubbles", spinner="wait"):
         data = Resolve(litematica)
-    with open(path, "w", encoding="utf8") as f:
+    with open(os.path.join(path,filename), "w", encoding="utf8") as f:
         json.dump(data, f, indent=4)
 
 
