@@ -1,1 +1,1 @@
-from objbuilder.toobj import LitimaticaToObj
+from ..objbuilder.toobj import LitimaticaToObj

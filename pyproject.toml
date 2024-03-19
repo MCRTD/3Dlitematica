@@ -43,3 +43,39 @@ target-version = "py310"
 [tool.ruff.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
 max-complexity = 10
+
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "3dLitematica"
+authors = [
+    {name = "phillychi3", email = "phillychi3@gmail.com"},
+    {name = "LegendsOfSky"},
+]
+description = "A tool can transform Litematica to 3D Obj"
+readme = "README.md"
+requires-python = ">=3.8"
+keywords = ["minecraft", "Litematica"]
+license = {file = "LICENSE"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "alive_progress",
+    "click"
+]
+dynamic = ["version"]
+
+[project.urls]
+Repository = "https://github.com/MCRTD/3Dlitematica.git"
+
+[project.scripts]
+3dLitematica = "t3dlitematica.__main__:cli"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["t3dlitematica*","resource*"]
+
+[tool.setuptools_scm]
