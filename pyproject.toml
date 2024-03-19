@@ -79,3 +79,4 @@ where = ["."]
 include = ["t3dlitematica*","resource*"]
 
 [tool.setuptools_scm]
+local_scheme = "no-local-version"
