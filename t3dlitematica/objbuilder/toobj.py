@@ -16,7 +16,7 @@ def LitimaticaToObj(litematica: dict, TextureFolder: str, output: str = "./") ->
     )
     regonname = list(litematica["Regions"].keys())[0]
     litematica = litematica["Regions"][regonname]["decode_BlockStates"]
-    Objhandel("test", litematica, size, TextureFolder, output)
+    return Objhandel(litematica["Metadata"]["Name"], litematica, size, TextureFolder, output)
 
 class Objhandel:
     def __init__(self, name:str, data:List[dict], size:tuple[int,int,int],TextureFolder:str,outputfolder:str,show_error_block:bool=False) -> None:
@@ -34,6 +34,9 @@ class Objhandel:
         self.main(data, size)
         shutil.make_archive(os.path.join(self.outputfolder, self.name), "zip", self.tempfolder)
         shutil.rmtree(self.tempfolder)
+
+    def __str__(self) -> str:
+        return str(os.path.join(self.outputfolder, self.name) + ".zip")
 
     def main(self, data, size):
         data = list(reversed(data))
