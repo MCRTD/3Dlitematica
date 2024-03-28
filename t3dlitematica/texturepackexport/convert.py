@@ -6,12 +6,26 @@ class convert_texturepack:
 
     def __init__(self, path: str , output: str):
         self.path = path
-        self.mainpath = os.path.join(path, "assets", "minecraft")
+        self.tempfolder = None
+        if path.endswith(".zip"):
+            import zipfile
+            import tempfile
+            self.tempfolder = tempfile.mkdtemp()
+            with zipfile.ZipFile(path, "r") as z:
+                z.extractall(self.tempfolder)
+            self.path = self.tempfolder
+        if "assets" not in os.listdir(self.path):
+            self.path = os.path.join(self.path, os.listdir(self.path)[0])
+            if "assets" not in os.listdir(self.path):
+                raise FileNotFoundError("找不到assets資料夾")
+        self.mainpath = os.path.join(self.path, "assets", "minecraft")
         self.output = output
         os.makedirs(self.output, exist_ok=True)
         self.noneedfind = ["armor_trims","mob_effects","shield_patterns","particles"]
         self.blocksdata = {"models":{}}
         self.start()
+        if self.tempfolder:
+            shutil.rmtree(self.tempfolder)
 
 
     def start(self) -> None:
