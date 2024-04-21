@@ -15,8 +15,9 @@ def LitimaticaToObj(litematica: dict, TextureFolder: str, output: str = "./") ->
         int(litematica["Metadata"]["EnclosingSize"]["z"]),
     )
     regonname = list(litematica["Regions"].keys())[0]
+    name = litematica["Metadata"]["Name"]
     litematica = litematica["Regions"][regonname]["decode_BlockStates"]
-    return Objhandel(litematica["Metadata"]["Name"], litematica, size, TextureFolder, output)
+    return Objhandel(name, litematica, size, TextureFolder, output)
 
 class Objhandel:
     def __init__(self, name:str, data:List[dict], size:tuple[int,int,int],TextureFolder:str,outputfolder:str,show_error_block:bool=False) -> None:
