@@ -1,13 +1,16 @@
 import json
 import os
 import shutil
+from pathlib import Path
 
 class convert_texturepack:
 
-    def __init__(self, path: str , output: str):
+    def __init__(self, path: str | Path , output: str):
+        if not isinstance(path, Path):
+            path = Path(path)
         self.path = path
         self.tempfolder = None
-        if path.endswith(".zip"):
+        if path.suffix == ".zip":
             import zipfile
             import tempfile
             self.tempfolder = tempfile.mkdtemp()
