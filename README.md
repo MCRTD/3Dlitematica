@@ -4,6 +4,7 @@
 > This project is a pre-release, and we do not guarantee that all functions will be available.
 
 ![圖片](https://github.com/MCRTD/3Dlitematica/assets/55632143/d7fceedb-a28e-4b54-a73a-d31da145e608)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMCRTD%2F3Dlitematica.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FMCRTD%2F3Dlitematica?ref=badge_shield)
 
 # Install 
 ```bash
@@ -66,3 +67,7 @@ Options:
   --help             Show this message and exit.
 ```
 
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMCRTD%2F3Dlitematica.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FMCRTD%2F3Dlitematica?ref=badge_large)
