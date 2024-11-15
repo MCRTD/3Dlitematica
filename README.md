@@ -66,3 +66,5 @@ Options:
   --help             Show this message and exit.
 ```
 
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMCRTD%2F3Dlitematica.svg?type=large&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2FMCRTD%2F3Dlitematica?ref=badge_large&issueType=license)
+
